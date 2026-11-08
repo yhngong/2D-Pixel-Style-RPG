@@ -25,10 +25,11 @@
             </div>
             <div class="bar-container xp-bar" title="Experience Points">
               <div class="bar-fill" id="hud-xp-fill"></div>
-              <span class="bar-text" id="hud-xp-text">0 / 100 XP</span>
+              <span class="bar-text" id="hud-xp-text">0 / 80 XP</span>
             </div>
           </div>
         </div>
+
         <div class="resources-panel">
           <div class="res-item gold-res" title="Gold Coins">
             <span class="res-icon">🪙</span>
@@ -40,44 +41,79 @@
           </div>
           <div class="res-item atk-res" title="Total Attack Power">
             <span class="res-icon">⚔️</span>
-            <span id="hud-atk">5</span>
+            <span id="hud-atk">6</span>
           </div>
           <div class="res-item def-res" title="Total Defense">
             <span class="res-icon">🛡️</span>
             <span id="hud-def">0</span>
           </div>
         </div>
+
+        <!-- ACTIVE QUEST & BOUNTY TRACKER -->
+        <div id="quest-tracker" class="quest-tracker">
+          <div class="quest-header">📜 Active Quest</div>
+          <div id="quest-title" class="quest-title">Gear Up in Oakhaven</div>
+          <div id="quest-progress" class="quest-progress">Visit a Village Shop [F]</div>
+        </div>
       </div>
 
       <div class="hud-center">
         <div id="zone-banner">🏡 Oakhaven Village (Safe Zone)</div>
         <div id="set-bonus-banner" class="hidden">✨ Set Bonus Active!</div>
+        <!-- BOSS HEALTH BAR (Appears when fighting a World Boss) -->
+        <div id="boss-hud" class="boss-hud hidden">
+          <div id="boss-name" class="boss-name">👑 Ignis, Mythic Abyssal Dragon</div>
+          <div class="boss-bar-bg">
+            <div id="boss-bar-fill" class="boss-bar-fill"></div>
+            <span id="boss-bar-text" class="boss-bar-text">5000 / 5000</span>
+          </div>
+        </div>
       </div>
 
       <div class="hud-right">
-        <button class="pixel-btn" id="btn-inventory" title="Inventory & Equipment (I or E)">
-          🎒 Gear & Bag <span class="key-hint">[I]</span>
-        </button>
-        <button class="pixel-btn" id="btn-help" title="Controls & Guide (H)">
-          📜 Guide <span class="key-hint">[H]</span>
-        </button>
+        <div class="minimap-panel">
+          <canvas id="minimap-canvas" width="144" height="144"></canvas>
+          <div class="minimap-footer">
+            <span id="coords-text">X: 80, Y: 80</span>
+            <button class="mini-tp-btn" id="btn-recall" title="Teleport to Oakhaven Village [T]">🏡 Recall [T]</button>
+          </div>
+        </div>
+        <div class="hud-buttons-col">
+          <button class="pixel-btn" id="btn-inventory" title="Inventory & Equipment (I or E)">
+            🎒 Gear & Bag <span class="key-hint">[I]</span>
+          </button>
+          <button class="pixel-btn" id="btn-help" title="Controls & World Guide (H)">
+            📜 Guide <span class="key-hint">[H]</span>
+          </button>
+          <button class="pixel-btn" id="btn-sound" title="Toggle Retro SFX (M)">
+            🔊 SFX: ON
+          </button>
+        </div>
       </div>
     </div>
 
     <!-- INTERACTION PROMPT -->
     <div id="interact-prompt" class="hidden">Press <span class="key-badge">F</span> to Interact</div>
 
-    <!-- BOTTOM HOTBAR -->
+    <!-- BOTTOM HOTBAR & ABILITY BAR -->
     <div id="bottom-hud">
-      <div id="hotbar">
-        <!-- Populated dynamically: 1: Sword, 2: Pickaxe, 3: Potion, 4-8: Blocks/Chests -->
+      <div class="ability-strip">
+        <div class="ability-pill" id="ability-dash" title="Dash & Dodge (Shift)">
+          ⚡ Dash <span class="key-hint">[Shift]</span> <span id="dash-cd">Ready</span>
+        </div>
+        <div class="ability-pill" id="ability-whirlwind" title="360° Whirlwind Slash (Q)">
+          🌪️ Whirlwind <span class="key-hint">[Q]</span> <span id="whirlwind-cd">Ready</span>
+        </div>
       </div>
+      <div id="hotbar"></div>
       <div class="controls-mini">
-        <span><b>WASD/Arrows</b> Move</span>
-        <span><b>L-Click/Space</b> Attack / Mine / Use</span>
-        <span><b>R-Click</b> Place Block</span>
-        <span><b>1-8</b> Hotbar</span>
-        <span><b>F</b> Talk / Open Shop</span>
+        <span><b>WASD</b> Move</span>
+        <span><b>L-Click/Space</b> Attack & Mine</span>
+        <span><b>R-Click/B</b> Place Block</span>
+        <span><b>Shift</b> Dash</span>
+        <span><b>Q</b> Whirlwind</span>
+        <span><b>F</b> Shop / NPC</span>
+        <span><b>T</b> Village Recall</span>
       </div>
     </div>
 
@@ -85,13 +121,13 @@
     <div id="modal-inventory" class="modal-overlay hidden">
       <div class="modal-window wide-modal">
         <div class="modal-header">
-          <h2>🛡️ Hero Equipment & Inventory</h2>
+          <h2>🛡️ Hero Equipment, Set Bonuses & Backpack</h2>
           <button class="close-btn" data-close="modal-inventory">✕</button>
         </div>
         <div class="modal-body split-body">
           <!-- Left: Character Equipment & Stats -->
           <div class="equip-column">
-            <h3>Equipped Gear</h3>
+            <h3>Equipped Gear (Click to Unequip)</h3>
             <div class="equip-slots">
               <div class="equip-slot" data-slot="weapon" id="slot-weapon">
                 <div class="slot-label">Weapon</div>
@@ -120,7 +156,7 @@
             </div>
 
             <div class="set-bonus-box" id="equip-set-info">
-              <div class="set-title">Armor Set Bonus (4/4 matching rarity)</div>
+              <div class="set-title">Armor Set Bonus (4/4 Matching Rarity)</div>
               <div class="set-desc" id="equip-set-desc">Equip 4 armor pieces of the same rarity tier to unlock powerful full-set bonuses!</div>
             </div>
 
@@ -133,7 +169,7 @@
               <button class="tab-btn active" data-tab="all">All</button>
               <button class="tab-btn" data-tab="weapon">Weapons</button>
               <button class="tab-btn" data-tab="armor">Armor</button>
-              <button class="tab-btn" data-tab="tool">Tools</button>
+              <button class="tab-btn" data-tab="tool">Pickaxes</button>
               <button class="tab-btn" data-tab="consumable">Potions & Chests</button>
               <button class="tab-btn" data-tab="block">Blocks & Ores</button>
             </div>
@@ -146,7 +182,7 @@
       </div>
     </div>
 
-    <!-- SHOP MODAL (Weapons, Armor, Tools, Alchemist) -->
+    <!-- SHOP MODAL (Weapons, Armor, Tools, Alchemist, Bone Collector) -->
     <div id="modal-shop" class="modal-overlay hidden">
       <div class="modal-window wide-modal">
         <div class="modal-header">
@@ -164,10 +200,10 @@
             </div>
             <div class="sell-section">
               <h3>💰 Quick Sell & Trade</h3>
-              <p class="small-note">Trade collected Bones & mined Ores for Gold, or sell unwanted gear from your Inventory.</p>
+              <p class="small-note">Trade collected Monster Bones & mined Ores for Gold, or sell unwanted gear from your Inventory.</p>
               <div class="quick-sell-buttons">
-                <button class="pixel-btn gold-btn" id="btn-sell-bones">Sell All Bones (🦴 4g each)</button>
-                <button class="pixel-btn gold-btn" id="btn-sell-ores">Sell Mined Ores</button>
+                <button class="pixel-btn gold-btn" id="btn-sell-bones">Sell All Bones (🦴 5g each)</button>
+                <button class="pixel-btn gold-btn" id="btn-sell-ores">Sell All Mined Ores</button>
               </div>
             </div>
           </div>
@@ -217,38 +253,30 @@
         <div class="modal-body guide-body">
           <div class="guide-section">
             <h3>🎯 Your Goal: Become the Strongest Warrior</h3>
-            <p>You begin in <b>Oakhaven Village</b> with <b>100 Gold</b>. Visit the merchants to buy your first Weapon, Pickaxe, Armor, and Potions, then venture into the wilderness to slay monsters, mine ores, and defeat the <b>Mythic Abyssal Dragon</b>!</p>
+            <p>You spawn in <b>Oakhaven Village</b> with <b>100 Gold</b>. Visit the 4 village shops to buy your first Weapon, Pickaxe, Armor, and Potions, then explore 7 massive biomes, conquer 4 World Bosses, mine rare ores, and forge <b>+50 Mythic Armor</b>!</p>
           </div>
           <div class="guide-section">
-            <h3>⚔️ Controls</h3>
+            <h3>⚔️ Controls & Abilities</h3>
             <ul>
-              <li><b>WASD / Arrow Keys:</b> Walk around the 2.5D world</li>
-              <li><b>Left Click / Spacebar:</b> Swing weapon at monsters OR mine ore/blocks with Pickaxe</li>
-              <li><b>Right Click (or B):</b> Place selected block from hotbar onto the ground</li>
-              <li><b>F Key:</b> Interact with Village Shops & the Blacksmith</li>
-              <li><b>1 - 8 Keys:</b> Select Hotbar slot (Drink potions, open Loot Chests, select blocks)</li>
-              <li><b>I or E Key:</b> Open Equipment & Inventory</li>
+              <li><b>WASD / Arrow Keys:</b> Walk around the 2.5D pixel world</li>
+              <li><b>Left Click / Spacebar:</b> Swing weapon (3-hit combo + projectiles on Legendary/Mythic blades) OR mine blocks with Pickaxe</li>
+              <li><b>Right Click (or B):</b> Place selected block from hotbar onto the map</li>
+              <li><b>Shift:</b> Dash / Dodge roll with speed burst</li>
+              <li><b>Q Key:</b> 360° Whirlwind AoE Slash</li>
+              <li><b>F Key:</b> Talk to Village Shopkeepers, Bone Trader & Blacksmith</li>
+              <li><b>T Key:</b> Teleport back to Oakhaven Village Plaza</li>
             </ul>
           </div>
           <div class="guide-section">
-            <h3>🌈 Rarity Tiers & Level Requirements</h3>
-            <p>All Weapons, Armor, and Pickaxes come in 6 rarities. Better armor requires higher Hero Levels to equip:</p>
+            <h3>🌈 6 Rarity Tiers, Level Requirements & Full-Set Bonuses</h3>
             <ul class="rarity-guide-list">
-              <li><span class="rarity-tag rarity-common">Common</span> (Lv. 1+) — Full Set: +15 Max HP, +2 DEF</li>
-              <li><span class="rarity-tag rarity-uncommon">Uncommon</span> (Lv. 3+) — Full Set: +35 Max HP, +12% Move Speed, +4 ATK</li>
-              <li><span class="rarity-tag rarity-rare">Rare</span> (Lv. 6+) — Full Set: +75 Max HP, +15% Damage, +3 HP/s Regen</li>
-              <li><span class="rarity-tag rarity-epic">Epic</span> (Lv. 10+) — Full Set: +140 Max HP, +25% Damage, +15% Crit, 10% Lifesteal</li>
-              <li><span class="rarity-tag rarity-legendary">Legendary</span> (Lv. 15+) — Full Set: +280 Max HP, +40% Damage, +25% Crit, +12 HP/s Regen</li>
-              <li><span class="rarity-tag rarity-mythic">Mythic</span> (Lv. 20+) — Full Set: +600 Max HP, +75% Damage, +35% Crit, 20% Lifesteal, Mythic Aura!</li>
+              <li><span class="rarity-tag rarity-common">Common</span> (Lv. 1+) — Full Set: +25 Max HP, +4 DEF</li>
+              <li><span class="rarity-tag rarity-uncommon">Uncommon</span> (Lv. 3+) — Full Set: +55 Max HP, +12% Move Speed, +6 ATK</li>
+              <li><span class="rarity-tag rarity-rare">Rare</span> (Lv. 6+) — Full Set: +110 Max HP, +18% Damage, +5 HP/s Regen</li>
+              <li><span class="rarity-tag rarity-epic">Epic</span> (Lv. 10+) — Full Set: +220 Max HP, +28% Damage, +20% Crit, 12% Lifesteal</li>
+              <li><span class="rarity-tag rarity-legendary">Legendary</span> (Lv. 15+) — Full Set: +420 Max HP, +45% Damage, +30% Crit, +20 HP/s Regen</li>
+              <li><span class="rarity-tag rarity-mythic">Mythic</span> (Lv. 20+) — Full Set: +850 Max HP, +80% Damage, +40% Crit, 25% Lifesteal & Celestial Wings!</li>
             </ul>
-          </div>
-          <div class="guide-section">
-            <h3>⚒️ Blacksmith Armor Upgrades (+1 to +50)</h3>
-            <p>Speak to <b>Bram the Blacksmith</b> in the village center to upgrade any piece of armor up to <b>+50</b> using Gold! Every upgrade level increases the armor's Defense and bonus HP.</p>
-          </div>
-          <div class="guide-section">
-            <h3>📦 Monster Drops & Chests</h3>
-            <p>Monsters drop <b>Gold</b>, <b>Bones</b>, and rarely <b>Tiered Treasure Chests</b> based on the monster's difficulty! Stronger monsters drop higher-tier chests containing Rare, Epic, Legendary, or even Mythic gear.</p>
           </div>
         </div>
       </div>
@@ -258,6 +286,7 @@
     <div id="toast-container"></div>
   </div>
 
+  <script src="sprites.js"></script>
   <script src="game.js"></script>
 </body>
 </html>

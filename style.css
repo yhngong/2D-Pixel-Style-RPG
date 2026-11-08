@@ -7,7 +7,7 @@
 
 :root {
   --bg-dark: #14121d;
-  --panel-bg: rgba(24, 21, 36, 0.95);
+  --panel-bg: rgba(20, 17, 32, 0.94);
   --panel-border: #6c5b7b;
   --panel-highlight: #f8b500;
   --text-main: #f4f1ea;
@@ -49,9 +49,9 @@ body, html {
 /* TOP HUD */
 #top-hud {
   position: absolute;
-  top: 12px;
-  left: 14px;
-  right: 14px;
+  top: 10px;
+  left: 12px;
+  right: 12px;
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
@@ -66,7 +66,7 @@ body, html {
 .hud-left {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 7px;
 }
 
 .player-badge {
@@ -74,9 +74,9 @@ body, html {
   align-items: center;
   gap: 10px;
   background: var(--panel-bg);
-  border: 3px solid #524763;
+  border: 3px solid #584b6e;
   box-shadow: 0 4px 0 #0c0a12;
-  padding: 8px 12px;
+  padding: 7px 11px;
   border-radius: 6px;
 }
 
@@ -98,7 +98,7 @@ body, html {
 .player-bars {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 5px;
   width: 210px;
 }
 
@@ -113,7 +113,7 @@ body, html {
 
 .bar-fill {
   height: 100%;
-  transition: width 0.18s ease-out;
+  transition: width 0.16s ease-out;
 }
 
 .hp-bar .bar-fill {
@@ -142,9 +142,9 @@ body, html {
   display: flex;
   gap: 8px;
   background: var(--panel-bg);
-  border: 3px solid #524763;
+  border: 3px solid #584b6e;
   box-shadow: 0 4px 0 #0c0a12;
-  padding: 6px 12px;
+  padding: 5px 11px;
   border-radius: 6px;
 }
 
@@ -167,6 +167,36 @@ body, html {
 .atk-res { color: #f87171; }
 .def-res { color: #60a5fa; }
 
+/* QUEST TRACKER */
+.quest-tracker {
+  background: var(--panel-bg);
+  border: 3px solid #6d598a;
+  border-left: 5px solid #fbbf24;
+  box-shadow: 0 4px 0 #0c0a12;
+  padding: 6px 12px;
+  border-radius: 6px;
+  max-width: 280px;
+}
+
+.quest-header {
+  font-size: 14px;
+  color: #fbbf24;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.quest-title {
+  font-size: 19px;
+  font-weight: bold;
+  color: #fff;
+}
+
+.quest-progress {
+  font-size: 16px;
+  color: #86efac;
+}
+
+/* CENTER BANNER & BOSS HUD */
 .hud-center {
   display: flex;
   flex-direction: column;
@@ -197,14 +227,107 @@ body, html {
   animation: pulseGlow 2s infinite;
 }
 
+.boss-hud {
+  width: 390px;
+  background: rgba(24, 10, 20, 0.94);
+  border: 3px solid #ff3e6c;
+  box-shadow: 0 4px 12px rgba(255, 62, 108, 0.45);
+  border-radius: 6px;
+  padding: 6px 10px;
+  text-align: center;
+}
+
+.boss-name {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 10px;
+  color: #fda4af;
+  margin-bottom: 5px;
+  text-shadow: 1px 1px 0 #000;
+}
+
+.boss-bar-bg {
+  position: relative;
+  height: 18px;
+  background: #2a0a18;
+  border: 2px solid #881337;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.boss-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #be123c, #ff3e6c, #fbbf24);
+  width: 100%;
+  transition: width 0.12s;
+}
+
+.boss-bar-text {
+  position: absolute;
+  inset: 0;
+  font-size: 15px;
+  color: #fff;
+  text-shadow: 1px 1px 2px #000;
+}
+
 @keyframes pulseGlow {
   0%, 100% { transform: scale(1); }
   50% { transform: scale(1.04); }
 }
 
+/* RIGHT HUD & MINIMAP */
 .hud-right {
   display: flex;
+  align-items: flex-start;
   gap: 8px;
+}
+
+.hud-buttons-col {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.minimap-panel {
+  background: var(--panel-bg);
+  border: 3px solid #6c5b7b;
+  box-shadow: 0 4px 0 #0c0a12;
+  padding: 5px;
+  border-radius: 6px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+#minimap-canvas {
+  border: 2px solid #3b3154;
+  border-radius: 4px;
+  image-rendering: pixelated;
+  background: #0f172a;
+}
+
+.minimap-footer {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 15px;
+  color: #cbd5e1;
+}
+
+.mini-tp-btn {
+  background: #2e2344;
+  color: #fde68a;
+  border: 1px solid #fbbf24;
+  border-radius: 3px;
+  padding: 1px 5px;
+  font-family: 'VT323', monospace;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.mini-tp-btn:hover {
+  background: #473669;
 }
 
 .pixel-btn {
@@ -212,9 +335,9 @@ body, html {
   color: var(--text-main);
   border: 3px solid #756291;
   box-shadow: 0 4px 0 #14101d;
-  padding: 8px 14px;
+  padding: 6px 12px;
   font-family: 'VT323', monospace;
-  font-size: 20px;
+  font-size: 19px;
   border-radius: 6px;
   cursor: pointer;
   transition: transform 0.08s, background 0.15s;
@@ -251,21 +374,21 @@ body, html {
 
 .key-hint {
   color: #fbbf24;
-  font-size: 16px;
+  font-size: 15px;
 }
 
 /* INTERACTION PROMPT */
 #interact-prompt {
   position: absolute;
-  bottom: 112px;
+  bottom: 138px;
   left: 50%;
   transform: translateX(-50%);
-  background: rgba(18, 15, 29, 0.92);
+  background: rgba(18, 15, 29, 0.94);
   border: 3px solid #fbbf24;
   box-shadow: 0 4px 0 #000;
-  padding: 8px 20px;
+  padding: 7px 18px;
   border-radius: 6px;
-  font-size: 22px;
+  font-size: 21px;
   color: #fff;
   z-index: 12;
   pointer-events: none;
@@ -282,17 +405,36 @@ body, html {
   margin: 0 4px;
 }
 
-/* BOTTOM HOTBAR */
+/* BOTTOM HOTBAR & ABILITIES */
 #bottom-hud {
   position: absolute;
-  bottom: 12px;
+  bottom: 10px;
   left: 50%;
   transform: translateX(-50%);
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 6px;
+  gap: 5px;
   z-index: 10;
+}
+
+.ability-strip {
+  display: flex;
+  gap: 10px;
+}
+
+.ability-pill {
+  background: rgba(24, 20, 38, 0.92);
+  border: 2px solid #6c5b7b;
+  padding: 3px 12px;
+  border-radius: 14px;
+  font-size: 17px;
+  color: #e2e8f0;
+  box-shadow: 0 3px 0 #0c0a12;
+}
+
+.ability-pill.ready {
+  border-color: #4ade80;
 }
 
 #hotbar {
@@ -340,7 +482,7 @@ body, html {
 }
 
 .slot-icon {
-  font-size: 24px;
+  font-size: 23px;
   line-height: 1;
 }
 
@@ -364,12 +506,12 @@ body, html {
 
 .controls-mini {
   display: flex;
-  gap: 14px;
-  background: rgba(15, 13, 24, 0.85);
+  gap: 12px;
+  background: rgba(15, 13, 24, 0.88);
   border: 2px solid #3f3654;
   padding: 3px 14px;
   border-radius: 4px;
-  font-size: 16px;
+  font-size: 15px;
   color: #cbd5e1;
 }
 
@@ -785,7 +927,7 @@ body, html {
 #toast-container {
   position: fixed;
   top: 85px;
-  right: 16px;
+  right: 185px;
   display: flex;
   flex-direction: column;
   gap: 8px;
