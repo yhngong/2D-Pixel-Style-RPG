@@ -32,37 +32,37 @@
 
         <div class="resources-panel">
           <div class="res-item gold-res" title="Gold Coins">
-            <span class="res-icon">🪙</span>
+            <span class="res-icon" id="hud-icon-gold"></span>
             <span id="hud-gold">100</span>
           </div>
           <div class="res-item bone-res" title="Monster Bones">
-            <span class="res-icon">🦴</span>
+            <span class="res-icon" id="hud-icon-bone"></span>
             <span id="hud-bones">0</span>
           </div>
           <div class="res-item atk-res" title="Total Attack Power">
-            <span class="res-icon">⚔️</span>
+            <span class="res-icon" id="hud-icon-atk"></span>
             <span id="hud-atk">6</span>
           </div>
           <div class="res-item def-res" title="Total Defense">
-            <span class="res-icon">🛡️</span>
+            <span class="res-icon" id="hud-icon-def"></span>
             <span id="hud-def">0</span>
           </div>
         </div>
 
         <!-- ACTIVE QUEST & BOUNTY TRACKER -->
         <div id="quest-tracker" class="quest-tracker">
-          <div class="quest-header">📜 Active Quest</div>
+          <div class="quest-header">ACTIVE QUEST</div>
           <div id="quest-title" class="quest-title">Gear Up in Oakhaven</div>
           <div id="quest-progress" class="quest-progress">Visit a Village Shop [F]</div>
         </div>
       </div>
 
       <div class="hud-center">
-        <div id="zone-banner">🏡 Oakhaven Village (Safe Zone)</div>
-        <div id="set-bonus-banner" class="hidden">✨ Set Bonus Active!</div>
+        <div id="zone-banner">Oakhaven Village (Safe Zone)</div>
+        <div id="set-bonus-banner" class="hidden">Set Bonus Active!</div>
         <!-- BOSS HEALTH BAR (Appears when fighting a World Boss) -->
         <div id="boss-hud" class="boss-hud hidden">
-          <div id="boss-name" class="boss-name">👑 Ignis, Mythic Abyssal Dragon</div>
+          <div id="boss-name" class="boss-name">Ignis, Mythic Abyssal Dragon</div>
           <div class="boss-bar-bg">
             <div id="boss-bar-fill" class="boss-bar-fill"></div>
             <span id="boss-bar-text" class="boss-bar-text">5000 / 5000</span>
@@ -75,18 +75,18 @@
           <canvas id="minimap-canvas" width="144" height="144"></canvas>
           <div class="minimap-footer">
             <span id="coords-text">X: 80, Y: 80</span>
-            <button class="mini-tp-btn" id="btn-recall" title="Teleport to Oakhaven Village [T]">🏡 Recall [T]</button>
+            <button class="mini-tp-btn" id="btn-recall" title="Teleport to Oakhaven Village [T]">Recall [T]</button>
           </div>
         </div>
         <div class="hud-buttons-col">
           <button class="pixel-btn" id="btn-inventory" title="Inventory & Equipment (I or E)">
-            🎒 Gear & Bag <span class="key-hint">[I]</span>
+            Gear & Bag <span class="key-hint">[I]</span>
           </button>
           <button class="pixel-btn" id="btn-help" title="Controls & World Guide (H)">
-            📜 Guide <span class="key-hint">[H]</span>
+            Guide <span class="key-hint">[H]</span>
           </button>
           <button class="pixel-btn" id="btn-sound" title="Toggle Retro SFX (M)">
-            🔊 SFX: ON
+            SFX: ON
           </button>
         </div>
       </div>
@@ -99,10 +99,10 @@
     <div id="bottom-hud">
       <div class="ability-strip">
         <div class="ability-pill" id="ability-dash" title="Dash & Dodge (Shift)">
-          ⚡ Dash <span class="key-hint">[Shift]</span> <span id="dash-cd">Ready</span>
+          Dash <span class="key-hint">[Shift]</span> <span id="dash-cd">Ready</span>
         </div>
         <div class="ability-pill" id="ability-whirlwind" title="360° Whirlwind Slash (Q)">
-          🌪️ Whirlwind <span class="key-hint">[Q]</span> <span id="whirlwind-cd">Ready</span>
+          Whirlwind <span class="key-hint">[Q]</span> <span id="whirlwind-cd">Ready</span>
         </div>
       </div>
       <div id="hotbar"></div>
@@ -121,8 +121,8 @@
     <div id="modal-inventory" class="modal-overlay hidden">
       <div class="modal-window wide-modal">
         <div class="modal-header">
-          <h2>🛡️ Hero Equipment, Set Bonuses & Backpack</h2>
-          <button class="close-btn" data-close="modal-inventory">✕</button>
+          <h2>Hero Equipment, Set Bonuses & Backpack</h2>
+          <button class="close-btn" data-close="modal-inventory">X</button>
         </div>
         <div class="modal-body split-body">
           <!-- Left: Character Equipment & Stats -->
@@ -186,8 +186,8 @@
     <div id="modal-shop" class="modal-overlay hidden">
       <div class="modal-window wide-modal">
         <div class="modal-header">
-          <h2 id="shop-title">🏪 Village Shop</h2>
-          <button class="close-btn" data-close="modal-shop">✕</button>
+          <h2 id="shop-title">Village Shop</h2>
+          <button class="close-btn" data-close="modal-shop">X</button>
         </div>
         <div class="modal-body split-body">
           <div class="shop-list-column">
@@ -199,10 +199,10 @@
               <div class="detail-placeholder">Click an item to inspect and purchase.</div>
             </div>
             <div class="sell-section">
-              <h3>💰 Quick Sell & Trade</h3>
+              <h3>Quick Sell & Trade</h3>
               <p class="small-note">Trade collected Monster Bones & mined Ores for Gold, or sell unwanted gear from your Inventory.</p>
               <div class="quick-sell-buttons">
-                <button class="pixel-btn gold-btn" id="btn-sell-bones">Sell All Bones (🦴 5g each)</button>
+                <button class="pixel-btn gold-btn" id="btn-sell-bones">Sell All Bones (5g each)</button>
                 <button class="pixel-btn gold-btn" id="btn-sell-ores">Sell All Mined Ores</button>
               </div>
             </div>
@@ -215,8 +215,8 @@
     <div id="modal-blacksmith" class="modal-overlay hidden">
       <div class="modal-window">
         <div class="modal-header">
-          <h2>⚒️ Master Blacksmith: Armor Forge (Up to +50)</h2>
-          <button class="close-btn" data-close="modal-blacksmith">✕</button>
+          <h2>Master Blacksmith: Armor Forge (Up to +50)</h2>
+          <button class="close-btn" data-close="modal-blacksmith">X</button>
         </div>
         <div class="modal-body">
           <p class="smith-intro">
@@ -236,8 +236,8 @@
     <div id="modal-chest" class="modal-overlay hidden">
       <div class="modal-window chest-window">
         <div class="modal-header">
-          <h2 id="chest-modal-title">🎁 Monster Loot Chest Opened!</h2>
-          <button class="close-btn" data-close="modal-chest">✕</button>
+          <h2 id="chest-modal-title">Monster Loot Chest Opened!</h2>
+          <button class="close-btn" data-close="modal-chest">X</button>
         </div>
         <div class="modal-body chest-body" id="chest-loot-result"></div>
       </div>
@@ -247,16 +247,16 @@
     <div id="modal-help" class="modal-overlay hidden">
       <div class="modal-window">
         <div class="modal-header">
-          <h2>📜 Adventurer's Guide to Valoria</h2>
-          <button class="close-btn" data-close="modal-help">✕</button>
+          <h2>Adventurer's Guide to Valoria</h2>
+          <button class="close-btn" data-close="modal-help">X</button>
         </div>
         <div class="modal-body guide-body">
           <div class="guide-section">
-            <h3>🎯 Your Goal: Become the Strongest Warrior</h3>
+            <h3>Your Goal: Become the Strongest Warrior</h3>
             <p>You spawn in <b>Oakhaven Village</b> with <b>100 Gold</b>. Visit the 4 village shops to buy your first Weapon, Pickaxe, Armor, and Potions, then explore 7 massive biomes, conquer 4 World Bosses, mine rare ores, and forge <b>+50 Mythic Armor</b>!</p>
           </div>
           <div class="guide-section">
-            <h3>⚔️ Controls & Abilities</h3>
+            <h3>Controls & Abilities</h3>
             <ul>
               <li><b>WASD / Arrow Keys:</b> Walk around the 2.5D pixel world</li>
               <li><b>Left Click / Spacebar:</b> Swing weapon (3-hit combo + projectiles on Legendary/Mythic blades) OR mine blocks with Pickaxe</li>
@@ -268,7 +268,7 @@
             </ul>
           </div>
           <div class="guide-section">
-            <h3>🌈 6 Rarity Tiers, Level Requirements & Full-Set Bonuses</h3>
+            <h3>6 Rarity Tiers, Level Requirements & Full-Set Bonuses</h3>
             <ul class="rarity-guide-list">
               <li><span class="rarity-tag rarity-common">Common</span> (Lv. 1+) — Full Set: +25 Max HP, +4 DEF</li>
               <li><span class="rarity-tag rarity-uncommon">Uncommon</span> (Lv. 3+) — Full Set: +55 Max HP, +12% Move Speed, +6 ATK</li>

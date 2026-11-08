@@ -1,11 +1,12 @@
 /**
- * VALORIA: 2.5D PIXEL RPG (MEGA EXPANSION)
+ * VALORIA: 2.5D PIXEL RPG (ZERO-EMOJI PIXEL SPRITE EDITION)
  * Features:
- * - Authentic 2.5D Pixel Art Sprites via SpriteEngine (sprites.js) + Pokemon Gen-4/5 Oblique 3D Buildings, Cliffs & Blocks
+ * - 100% Real Pixel Art Sprites via SpriteEngine (sprites.js) — zero emoji sprites!
+ * - Grounded 2.5D shadows directly underneath Player, NPC, Monster, and Tree feet (no floating!)
  * - Massive 160x160 World (25,600 tiles) across 7 Biomes + Live Radar Minimap + Teleport Recall [T]
  * - Oakhaven Village with 4 Interactive Shops (Armory, Alchemist/Miner, Bone Relic Trader, and +50 Master Blacksmith)
  * - 6 Rarity Tiers (Common, Uncommon, Rare, Epic, Legendary, Mythic) with Level Requirements & Full-Set Bonuses
- * - Active Combat Skills: Dash [Shift], 360° Whirlwind Slash [Q], Sword Energy Waves on Legendary/Mythic Blades
+ * - Active Combat Skills: Dash [Shift], 360° Whirlwind Slash [Q], Sword Energy Waves on Epic/Legendary/Mythic Blades
  * - 14 Monster Species + 4 Giant World Bosses with Boss Health Bar HUD, Bone drops, Gold, and Tier 1-6 Loot Chests
  * - Pickaxe Mining (10 Block/Ore types) & 2.5D Block Placement + WebAudio Retro Chiptune Sound Effects
  */
@@ -153,28 +154,55 @@ const RARITIES = {
 const RARITY_ORDER = ['common', 'uncommon', 'rare', 'epic', 'legendary', 'mythic'];
 
 // ==========================================
-// 2. EXPANDED ITEM CATALOG
+// 2. EXPANDED ITEM CATALOG (With Real Pixel Art Icons!)
 // ==========================================
 const ITEM_DB = {};
 
+function getItemIconHtml(item, size = 24) {
+  if (!item) return '';
+  const r = RARITIES[item.rarity] || RARITIES.common;
+  if (item.type === 'weapon') {
+    const kind = item.id.includes('axe') || item.id.includes('claymore') || item.id.includes('halberd') || item.id.includes('reaver') || item.id.includes('hammer') || item.id.includes('scythe') ? 'greatsword' : 'sword';
+    return SpriteEngine.getIconHtml(kind, item.bladeColor || r.color, '#fbbf24', size);
+  }
+  if (item.type === 'tool') {
+    return SpriteEngine.getIconHtml('pickaxe', item.headColor || r.color, '#a16207', size);
+  }
+  if (item.type === 'armor') {
+    return SpriteEngine.getIconHtml(item.slot, r.color, r.darkColor, size);
+  }
+  if (item.type === 'consumable') {
+    const pColor = item.buffType === 'berserk' ? '#f97316' : r.color;
+    return SpriteEngine.getIconHtml('potion', pColor, '#ffffff', size);
+  }
+  if (item.type === 'chest') {
+    return SpriteEngine.getIconHtml('chest', r.color, '#fbbf24', size);
+  }
+  if (item.type === 'block') {
+    return SpriteEngine.getIconHtml('block', item.topColor, item.sideColor, size);
+  }
+  return SpriteEngine.getIconHtml('sword', r.color, '#fbbf24', size);
+}
+
 function registerItem(item) {
+  item.icon = getItemIconHtml(item, 24);
   ITEM_DB[item.id] = item;
 }
 
-// 14 Weapons across all 6 rarities (Legendary & Mythic weapons also fire energy projectiles!)
+// 12 Weapons across all 6 rarities
 const WEAPON_TEMPLATES = [
-  { rarity: 'common', id: 'sword_common', name: 'Rusty Shortsword', icon: '🗡️', atk: 8, price: 25, bladeColor: '#cbd5e1' },
-  { rarity: 'common', id: 'axe_common', name: 'Militia Broadsword', icon: '⚔️', atk: 12, price: 45, bladeColor: '#94a3b8' },
-  { rarity: 'uncommon', id: 'sword_uncommon', name: 'Emerald Gladius', icon: '🗡️', atk: 20, price: 105, bladeColor: '#4ade80' },
-  { rarity: 'uncommon', id: 'claymore_uncommon', name: 'Forest Claymore', icon: '⚔️', atk: 28, price: 175, bladeColor: '#22c55e' },
-  { rarity: 'rare', id: 'sword_rare', name: 'Cobalt Katana', icon: '🗡️', atk: 45, price: 360, bladeColor: '#38bdf8' },
-  { rarity: 'rare', id: 'halberd_rare', name: 'Glacier Greatsword', icon: '⚔️', atk: 60, price: 540, bladeColor: '#0ea5e9' },
-  { rarity: 'epic', id: 'sword_epic', name: 'Obsidian Voidblade', icon: '🗡️', atk: 96, price: 1200, bladeColor: '#c084fc', projectileColor: '#c084fc' },
-  { rarity: 'epic', id: 'reaver_epic', name: 'Soulreaver Scythe', icon: '⚔️', atk: 125, price: 1700, bladeColor: '#a855f7', projectileColor: '#a855f7' },
-  { rarity: 'legendary', id: 'sword_legendary', name: 'Solaris Excalibur', icon: '🗡️', atk: 210, price: 4000, bladeColor: '#fbbf24', projectileColor: '#fbbf24' },
-  { rarity: 'legendary', id: 'hammer_legendary', name: 'Dragonbane Warhammer', icon: '🔨', atk: 265, price: 5500, bladeColor: '#f59e0b', projectileColor: '#f59e0b' },
-  { rarity: 'mythic', id: 'sword_mythic', name: 'Astral Godslayer', icon: '⚔️', atk: 420, price: 12000, bladeColor: '#ff3e6c', projectileColor: '#ff3e6c' },
-  { rarity: 'mythic', id: 'scythe_mythic', name: 'Celestial Starbreaker', icon: '🌟', atk: 550, price: 18500, bladeColor: '#f43f5e', projectileColor: '#fde047' }
+  { rarity: 'common', id: 'sword_common', name: 'Rusty Shortsword', atk: 8, price: 25, bladeColor: '#cbd5e1' },
+  { rarity: 'common', id: 'axe_common', name: 'Militia Broadsword', atk: 12, price: 45, bladeColor: '#94a3b8' },
+  { rarity: 'uncommon', id: 'sword_uncommon', name: 'Emerald Gladius', atk: 20, price: 105, bladeColor: '#4ade80' },
+  { rarity: 'uncommon', id: 'claymore_uncommon', name: 'Forest Claymore', atk: 28, price: 175, bladeColor: '#22c55e' },
+  { rarity: 'rare', id: 'sword_rare', name: 'Cobalt Katana', atk: 45, price: 360, bladeColor: '#38bdf8' },
+  { rarity: 'rare', id: 'halberd_rare', name: 'Glacier Greatsword', atk: 60, price: 540, bladeColor: '#0ea5e9' },
+  { rarity: 'epic', id: 'sword_epic', name: 'Obsidian Voidblade', atk: 96, price: 1200, bladeColor: '#c084fc', projectileColor: '#c084fc' },
+  { rarity: 'epic', id: 'reaver_epic', name: 'Soulreaver Scythe', atk: 125, price: 1700, bladeColor: '#a855f7', projectileColor: '#a855f7' },
+  { rarity: 'legendary', id: 'sword_legendary', name: 'Solaris Excalibur', atk: 210, price: 4000, bladeColor: '#fbbf24', projectileColor: '#fbbf24' },
+  { rarity: 'legendary', id: 'hammer_legendary', name: 'Dragonbane Warhammer', atk: 265, price: 5500, bladeColor: '#f59e0b', projectileColor: '#f59e0b' },
+  { rarity: 'mythic', id: 'sword_mythic', name: 'Astral Godslayer', atk: 420, price: 12000, bladeColor: '#ff3e6c', projectileColor: '#ff3e6c' },
+  { rarity: 'mythic', id: 'scythe_mythic', name: 'Celestial Starbreaker', atk: 550, price: 18500, bladeColor: '#f43f5e', projectileColor: '#fde047' }
 ];
 
 WEAPON_TEMPLATES.forEach(w => {
@@ -189,12 +217,12 @@ WEAPON_TEMPLATES.forEach(w => {
 
 // Pickaxes across all 6 rarities
 const PICKAXE_TEMPLATES = [
-  { rarity: 'common', id: 'pick_common', name: 'Wooden Pickaxe', icon: '⛏️', power: 1, mineSpeed: 1.1, price: 20, headColor: '#a16207' },
-  { rarity: 'uncommon', id: 'pick_uncommon', name: 'Copper Pickaxe', icon: '⛏️', power: 2, mineSpeed: 1.5, price: 90, headColor: '#4ade80' },
-  { rarity: 'rare', id: 'pick_rare', name: 'Cobalt Pickaxe', icon: '⛏️', power: 3, mineSpeed: 2.1, price: 310, headColor: '#38bdf8' },
-  { rarity: 'epic', id: 'pick_epic', name: 'Amethyst Pickaxe', icon: '⛏️', power: 4, mineSpeed: 2.9, price: 950, headColor: '#c084fc' },
-  { rarity: 'legendary', id: 'pick_legendary', name: 'Sunfire Pickaxe', icon: '⛏️', power: 5, mineSpeed: 4.0, price: 2800, headColor: '#fbbf24' },
-  { rarity: 'mythic', id: 'pick_mythic', name: 'Worldbreaker Pickaxe', icon: '⛏️', power: 6, mineSpeed: 6.0, price: 8200, headColor: '#ff3e6c' }
+  { rarity: 'common', id: 'pick_common', name: 'Wooden Pickaxe', power: 1, mineSpeed: 1.1, price: 20, headColor: '#a16207' },
+  { rarity: 'uncommon', id: 'pick_uncommon', name: 'Copper Pickaxe', power: 2, mineSpeed: 1.5, price: 90, headColor: '#4ade80' },
+  { rarity: 'rare', id: 'pick_rare', name: 'Cobalt Pickaxe', power: 3, mineSpeed: 2.1, price: 310, headColor: '#38bdf8' },
+  { rarity: 'epic', id: 'pick_epic', name: 'Amethyst Pickaxe', power: 4, mineSpeed: 2.9, price: 950, headColor: '#c084fc' },
+  { rarity: 'legendary', id: 'pick_legendary', name: 'Sunfire Pickaxe', power: 5, mineSpeed: 4.0, price: 2800, headColor: '#fbbf24' },
+  { rarity: 'mythic', id: 'pick_mythic', name: 'Worldbreaker Pickaxe', power: 6, mineSpeed: 6.0, price: 8200, headColor: '#ff3e6c' }
 ];
 
 PICKAXE_TEMPLATES.forEach(p => {
@@ -207,7 +235,7 @@ PICKAXE_TEMPLATES.forEach(p => {
   });
 });
 
-// Armor sets (Helmet, Chestplate, Leggings, Boots) across all 6 rarities
+// Armor sets across all 6 rarities
 const ARMOR_PREFIXES = {
   common: { prefix: 'Leather', baseDef: 2, baseHp: 10, basePrice: 20 },
   uncommon: { prefix: 'Chainmail', baseDef: 5, baseHp: 22, basePrice: 85 },
@@ -218,10 +246,10 @@ const ARMOR_PREFIXES = {
 };
 
 const ARMOR_SLOTS = [
-  { slot: 'helmet', label: 'Helm', icon: '🪖', defWeight: 0.9, hpWeight: 0.9, priceWeight: 0.9 },
-  { slot: 'chestplate', label: 'Cuirass', icon: '🦺', defWeight: 1.35, hpWeight: 1.35, priceWeight: 1.25 },
-  { slot: 'leggings', label: 'Greaves', icon: '👖', defWeight: 1.05, hpWeight: 1.05, priceWeight: 1.0 },
-  { slot: 'boots', label: 'Sabatons', icon: '🥾', defWeight: 0.75, hpWeight: 0.75, priceWeight: 0.85 }
+  { slot: 'helmet', label: 'Helm', defWeight: 0.9, hpWeight: 0.9, priceWeight: 0.9 },
+  { slot: 'chestplate', label: 'Cuirass', defWeight: 1.35, hpWeight: 1.35, priceWeight: 1.25 },
+  { slot: 'leggings', label: 'Greaves', defWeight: 1.05, hpWeight: 1.05, priceWeight: 1.0 },
+  { slot: 'boots', label: 'Sabatons', defWeight: 0.75, hpWeight: 0.75, priceWeight: 0.85 }
 ];
 
 RARITY_ORDER.forEach(rarity => {
@@ -238,7 +266,6 @@ RARITY_ORDER.forEach(rarity => {
       rarity,
       type: 'armor',
       slot: s.slot,
-      icon: s.icon,
       def,
       hp,
       price,
@@ -250,34 +277,34 @@ RARITY_ORDER.forEach(rarity => {
 
 // Potions, Buff Elixirs & Monster Loot Chests
 const CONSUMABLES = [
-  { id: 'potion_small', name: 'Minor Health Potion', rarity: 'common', type: 'consumable', icon: '🧪', heal: 65, price: 15, desc: 'Restores 65 HP instantly.' },
-  { id: 'potion_medium', name: 'Greater Health Potion', rarity: 'uncommon', type: 'consumable', icon: '⚗️', heal: 180, price: 50, desc: 'Restores 180 HP instantly.' },
-  { id: 'potion_large', name: 'Superior Elixir', rarity: 'rare', type: 'consumable', icon: '🍷', heal: 480, price: 150, desc: 'Restores 480 HP instantly.' },
-  { id: 'potion_supreme', name: 'Phoenix Nectar', rarity: 'epic', type: 'consumable', icon: '🍯', heal: 1400, price: 450, desc: 'Restores 1,400 HP instantly.' },
-  { id: 'potion_berserk', name: 'Berserker Rage Draught', rarity: 'rare', type: 'consumable', icon: '🔥', heal: 200, buffType: 'berserk', price: 180, desc: 'Restores 200 HP and grants +35% Attack & Speed for 30 seconds!' },
+  { id: 'potion_small', name: 'Minor Health Potion', rarity: 'common', type: 'consumable', heal: 65, price: 15, desc: 'Restores 65 HP instantly.' },
+  { id: 'potion_medium', name: 'Greater Health Potion', rarity: 'uncommon', type: 'consumable', heal: 180, price: 50, desc: 'Restores 180 HP instantly.' },
+  { id: 'potion_large', name: 'Superior Elixir', rarity: 'rare', type: 'consumable', heal: 480, price: 150, desc: 'Restores 480 HP instantly.' },
+  { id: 'potion_supreme', name: 'Phoenix Nectar', rarity: 'epic', type: 'consumable', heal: 1400, price: 450, desc: 'Restores 1,400 HP instantly.' },
+  { id: 'potion_berserk', name: 'Berserker Rage Draught', rarity: 'rare', type: 'consumable', heal: 200, buffType: 'berserk', price: 180, desc: 'Restores 200 HP and grants +35% Attack & Speed for 30 seconds!' },
   // Monster Drop Chests (Tiered 1 to 6)
-  { id: 'chest_tier_1', name: 'Wooden Monster Chest', rarity: 'common', type: 'chest', chestTier: 1, icon: '📦', price: 55, desc: 'Dropped by Lv.1-3 monsters. Open for Common-Uncommon gear & Gold!' },
-  { id: 'chest_tier_2', name: 'Reinforced Iron Chest', rarity: 'uncommon', type: 'chest', chestTier: 2, icon: '🧰', price: 150, desc: 'Dropped by Forest & Desert foes. Contains Uncommon-Rare gear!' },
-  { id: 'chest_tier_3', name: 'Runed Cobalt Chest', rarity: 'rare', type: 'chest', chestTier: 3, icon: '🎁', price: 400, desc: 'Dropped by Quarry & Tundra foes. High chance for Rare & Epic gear!' },
-  { id: 'chest_tier_4', name: 'Cursed Obsidian Chest', rarity: 'epic', type: 'chest', chestTier: 4, icon: '🔮', price: 1050, desc: 'Dropped by Shadowlands monsters. Contains Epic or Legendary equipment!' },
-  { id: 'chest_tier_5', name: 'Golden Dragon Hoard', rarity: 'legendary', type: 'chest', chestTier: 5, icon: '👑', price: 2800, desc: 'Dropped by Volcanic Titans. Contains Legendary or Mythic relics!' },
-  { id: 'chest_tier_6', name: 'Mythic Abyssal Reliquary', rarity: 'mythic', type: 'chest', chestTier: 6, icon: '🌟', price: 7500, desc: 'Dropped by World Bosses! Guaranteed Legendary/Mythic gear & huge Gold!' }
+  { id: 'chest_tier_1', name: 'Wooden Monster Chest', rarity: 'common', type: 'chest', chestTier: 1, price: 55, desc: 'Dropped by Lv.1-3 monsters. Open for Common-Uncommon gear & Gold!' },
+  { id: 'chest_tier_2', name: 'Reinforced Iron Chest', rarity: 'uncommon', type: 'chest', chestTier: 2, price: 150, desc: 'Dropped by Forest & Desert foes. Contains Uncommon-Rare gear!' },
+  { id: 'chest_tier_3', name: 'Runed Cobalt Chest', rarity: 'rare', type: 'chest', chestTier: 3, price: 400, desc: 'Dropped by Quarry & Tundra foes. High chance for Rare & Epic gear!' },
+  { id: 'chest_tier_4', name: 'Cursed Obsidian Chest', rarity: 'epic', type: 'chest', chestTier: 4, price: 1050, desc: 'Dropped by Shadowlands monsters. Contains Epic or Legendary equipment!' },
+  { id: 'chest_tier_5', name: 'Golden Dragon Hoard', rarity: 'legendary', type: 'chest', chestTier: 5, price: 2800, desc: 'Dropped by Volcanic Titans. Contains Legendary or Mythic relics!' },
+  { id: 'chest_tier_6', name: 'Mythic Abyssal Reliquary', rarity: 'mythic', type: 'chest', chestTier: 6, price: 7500, desc: 'Dropped by World Bosses! Guaranteed Legendary/Mythic gear & huge Gold!' }
 ];
 
 CONSUMABLES.forEach(registerItem);
 
 // 10 Mineable & Placeable Blocks / Ores
 const BLOCK_ITEMS = [
-  { id: 'block_wood', name: 'Oak Planks Block', rarity: 'common', type: 'block', blockType: 1, icon: '🪵', price: 4, sellPrice: 2, reqPower: 1, blockHp: 25, topColor: '#b47b44', sideColor: '#7c4d25', desc: 'Sturdy wooden construction block. Right-click (or B) to place!' },
-  { id: 'block_stone', name: 'Cobblestone Block', rarity: 'common', type: 'block', blockType: 2, icon: '🪨', price: 5, sellPrice: 3, reqPower: 1, blockHp: 35, topColor: '#94a3b8', sideColor: '#475569', desc: 'Solid stone wall block. Place to build forts or barriers!' },
-  { id: 'block_brick', name: 'Castle Brick Block', rarity: 'uncommon', type: 'block', blockType: 8, icon: '🧱', price: 10, sellPrice: 5, reqPower: 1, blockHp: 60, topColor: '#dc2626', sideColor: '#7f1d1d', desc: 'Decorative crimson castle brick block for building grand bases.' },
-  { id: 'block_lantern', name: 'Glowstone Lantern Block', rarity: 'rare', type: 'block', blockType: 9, icon: '🏮', price: 20, sellPrice: 10, reqPower: 1, blockHp: 30, topColor: '#fde047', sideColor: '#ca8a04', speckle: '#ffffff', desc: 'Radiant lantern block that illuminates your builds!' },
-  { id: 'block_copper', name: 'Copper Ore Block', rarity: 'uncommon', type: 'block', blockType: 3, icon: '🟠', price: 24, sellPrice: 14, reqPower: 1, blockHp: 45, topColor: '#d97706', sideColor: '#78350f', speckle: '#34d399', desc: 'Uncommon ore. Sell at any shop for 14 Gold or place as a block!' },
-  { id: 'block_iron', name: 'Iron Ore Block', rarity: 'rare', type: 'block', blockType: 4, icon: '🔩', price: 55, sellPrice: 32, reqPower: 2, blockHp: 80, topColor: '#60a5fa', sideColor: '#1e3a8a', speckle: '#e0f2fe', desc: 'Rare metallic ore. Requires Copper Pickaxe+. Sells for 32 Gold!' },
-  { id: 'block_gold', name: 'Gold Ore Block', rarity: 'epic', type: 'block', blockType: 5, icon: '🪙', price: 120, sellPrice: 72, reqPower: 3, blockHp: 130, topColor: '#facc15', sideColor: '#854d0e', speckle: '#fef08a', desc: 'Rich Gold vein! Requires Cobalt Pickaxe+. Sells for 72 Gold!' },
-  { id: 'block_diamond', name: 'Frost Diamond Ore', rarity: 'epic', type: 'block', blockType: 10, icon: '💠', price: 180, sellPrice: 105, reqPower: 3, blockHp: 165, topColor: '#67e8f9', sideColor: '#0e7490', speckle: '#ffffff', desc: 'Found in the Frostpeak Tundra! Sells for 105 Gold!' },
-  { id: 'block_mythril', name: 'Mythril Crystal Block', rarity: 'legendary', type: 'block', blockType: 6, icon: '💎', price: 280, sellPrice: 175, reqPower: 4, blockHp: 210, topColor: '#38bdf8', sideColor: '#0369a1', speckle: '#f0abfc', desc: 'Shimmering Legendary crystal! Sells for 175 Gold.' },
-  { id: 'block_celestite', name: 'Celestite Core Block', rarity: 'mythic', type: 'block', blockType: 7, icon: '🌌', price: 650, sellPrice: 400, reqPower: 5, blockHp: 320, topColor: '#f43f5e', sideColor: '#881337', speckle: '#fde047', desc: 'Mythic star-forged ore! Sells for 400 Gold each.' }
+  { id: 'block_wood', name: 'Oak Planks Block', rarity: 'common', type: 'block', blockType: 1, price: 4, sellPrice: 2, reqPower: 1, blockHp: 25, topColor: '#b47b44', sideColor: '#7c4d25', desc: 'Sturdy wooden construction block. Right-click (or B) to place!' },
+  { id: 'block_stone', name: 'Cobblestone Block', rarity: 'common', type: 'block', blockType: 2, price: 5, sellPrice: 3, reqPower: 1, blockHp: 35, topColor: '#94a3b8', sideColor: '#475569', desc: 'Solid stone wall block. Place to build forts or barriers!' },
+  { id: 'block_brick', name: 'Castle Brick Block', rarity: 'uncommon', type: 'block', blockType: 8, price: 10, sellPrice: 5, reqPower: 1, blockHp: 60, topColor: '#dc2626', sideColor: '#7f1d1d', desc: 'Decorative crimson castle brick block for building grand bases.' },
+  { id: 'block_lantern', name: 'Glowstone Lantern Block', rarity: 'rare', type: 'block', blockType: 9, price: 20, sellPrice: 10, reqPower: 1, blockHp: 30, topColor: '#fde047', sideColor: '#ca8a04', speckle: '#ffffff', desc: 'Radiant lantern block that illuminates your builds!' },
+  { id: 'block_copper', name: 'Copper Ore Block', rarity: 'uncommon', type: 'block', blockType: 3, price: 24, sellPrice: 14, reqPower: 1, blockHp: 45, topColor: '#d97706', sideColor: '#78350f', speckle: '#34d399', desc: 'Uncommon ore. Sell at any shop for 14 Gold or place as a block!' },
+  { id: 'block_iron', name: 'Iron Ore Block', rarity: 'rare', type: 'block', blockType: 4, price: 55, sellPrice: 32, reqPower: 2, blockHp: 80, topColor: '#60a5fa', sideColor: '#1e3a8a', speckle: '#e0f2fe', desc: 'Rare metallic ore. Requires Copper Pickaxe+. Sells for 32 Gold!' },
+  { id: 'block_gold', name: 'Gold Ore Block', rarity: 'epic', type: 'block', blockType: 5, price: 120, sellPrice: 72, reqPower: 3, blockHp: 130, topColor: '#facc15', sideColor: '#854d0e', speckle: '#fef08a', desc: 'Rich Gold vein! Requires Cobalt Pickaxe+. Sells for 72 Gold!' },
+  { id: 'block_diamond', name: 'Frost Diamond Ore', rarity: 'epic', type: 'block', blockType: 10, price: 180, sellPrice: 105, reqPower: 3, blockHp: 165, topColor: '#67e8f9', sideColor: '#0e7490', speckle: '#ffffff', desc: 'Found in the Frostpeak Tundra! Sells for 105 Gold!' },
+  { id: 'block_mythril', name: 'Mythril Crystal Block', rarity: 'legendary', type: 'block', blockType: 6, price: 280, sellPrice: 175, reqPower: 4, blockHp: 210, topColor: '#38bdf8', sideColor: '#0369a1', speckle: '#f0abfc', desc: 'Shimmering Legendary crystal! Sells for 175 Gold.' },
+  { id: 'block_celestite', name: 'Celestite Core Block', rarity: 'mythic', type: 'block', blockType: 7, price: 650, sellPrice: 400, reqPower: 5, blockHp: 320, topColor: '#f43f5e', sideColor: '#881337', speckle: '#fde047', desc: 'Mythic star-forged ore! Sells for 400 Gold each.' }
 ];
 
 const BLOCK_BY_TYPE = {};
@@ -285,6 +312,12 @@ BLOCK_ITEMS.forEach(b => {
   registerItem(b);
   BLOCK_BY_TYPE[b.blockType] = b;
 });
+
+// Inject Pixel-Art HUD Resource Icons
+document.getElementById('hud-icon-gold').innerHTML = SpriteEngine.getIconHtml('coin', '#fbbf24', '#f59e0b', 20);
+document.getElementById('hud-icon-bone').innerHTML = SpriteEngine.getIconHtml('bone', '#e2e8f0', '#94a3b8', 20);
+document.getElementById('hud-icon-atk').innerHTML = SpriteEngine.getIconHtml('sword', '#f87171', '#fbbf24', 20);
+document.getElementById('hud-icon-def').innerHTML = SpriteEngine.getIconHtml('shield', '#60a5fa', '#cbd5e1', 20);
 
 // ==========================================
 // 3. ARMOR UPGRADE MATH (+1 to +50)
@@ -354,7 +387,7 @@ const BUILDINGS = [
     roofDark: '#7f1d1d',
     wallColor: '#e7e5e4',
     trimColor: '#78350f',
-    signIcon: '⚔️',
+    signIconKind: 'sword',
     npcX: 74.0,
     npcY: 75.8,
     npcColor: '#ef4444',
@@ -374,7 +407,7 @@ const BUILDINGS = [
     roofDark: '#1e3a8a',
     wallColor: '#e7e5e4',
     trimColor: '#475569',
-    signIcon: '🧪',
+    signIconKind: 'potion',
     npcX: 86.0,
     npcY: 75.8,
     npcColor: '#38bdf8',
@@ -394,7 +427,7 @@ const BUILDINGS = [
     roofDark: '#92400e',
     wallColor: '#d6d3d1',
     trimColor: '#292524',
-    signIcon: '⚒️',
+    signIconKind: 'anvil',
     npcX: 75.0,
     npcY: 86.8,
     npcColor: '#f59e0b',
@@ -414,7 +447,7 @@ const BUILDINGS = [
     roofDark: '#4c1d95',
     wallColor: '#e7e5e4',
     trimColor: '#3b0764',
-    signIcon: '🎁',
+    signIconKind: 'chest',
     npcX: 86.0,
     npcY: 86.8,
     npcColor: '#a855f7',
@@ -437,24 +470,24 @@ function getZoneAt(tx, ty) {
   const dist = Math.hypot(dx, dy);
 
   if (dist < 16.5) {
-    return { id: 'village', name: '🏡 Oakhaven Village (Safe Zone)', safe: true };
+    return { id: 'village', name: 'Oakhaven Village (Safe Zone)', safe: true };
   }
   if (tx < 52 && ty < 60) {
-    return { id: 'tundra', name: '❄️ Frostpeak Tundra (Lv. 8-14)', safe: false };
+    return { id: 'tundra', name: 'Frostpeak Tundra (Lv. 8-14)', safe: false };
   }
   if (ty < 52 && tx >= 52 && tx <= 112) {
-    return { id: 'quarry', name: '⛏️ Northern Crystal Quarry (Lv. 5-11)', safe: false };
+    return { id: 'quarry', name: 'Northern Crystal Quarry (Lv. 5-11)', safe: false };
   }
   if (tx < 55 && ty >= 60) {
-    return { id: 'desert', name: '🏜️ Sunscorched Dunes (Lv. 4-9)', safe: false };
+    return { id: 'desert', name: 'Sunscorched Dunes (Lv. 4-9)', safe: false };
   }
   if (tx >= 106 && ty < 108) {
-    return { id: 'shadow', name: '🌑 Eastern Shadowlands (Lv. 11-17)', safe: false };
+    return { id: 'shadow', name: 'Eastern Shadowlands (Lv. 11-17)', safe: false };
   }
   if (ty >= 108) {
-    return { id: 'volcanic', name: '🌋 Southern Dragon Peaks (Lv. 16-25)', safe: false };
+    return { id: 'volcanic', name: 'Southern Dragon Peaks (Lv. 16-25)', safe: false };
   }
-  return { id: 'forest', name: '🌲 Whispering Wilds (Lv. 1-6)', safe: false };
+  return { id: 'forest', name: 'Whispering Wilds (Lv. 1-6)', safe: false };
 }
 
 function placeWorldBlock(tx, ty, blockType) {
@@ -537,34 +570,34 @@ function generateWorld() {
 
       if (g === GROUND.FOREST) {
         if (r < 0.042) worldProps.push({ type: 'tree', tx, ty });
-        else if (r < 0.064) placeWorldBlock(tx, ty, 3); // Copper Ore
-        else if (r < 0.078) placeWorldBlock(tx, ty, 2); // Stone
+        else if (r < 0.064) placeWorldBlock(tx, ty, 3);
+        else if (r < 0.078) placeWorldBlock(tx, ty, 2);
       } else if (g === GROUND.DESERT) {
         if (r < 0.025) worldProps.push({ type: 'palm', tx, ty });
-        else if (r < 0.060) placeWorldBlock(tx, ty, 3); // Copper
-        else if (r < 0.092) placeWorldBlock(tx, ty, 5); // Gold Ore
+        else if (r < 0.060) placeWorldBlock(tx, ty, 3);
+        else if (r < 0.092) placeWorldBlock(tx, ty, 5);
       } else if (g === GROUND.QUARRY) {
-        if (r < 0.045) placeWorldBlock(tx, ty, 3); // Copper
-        else if (r < 0.105) placeWorldBlock(tx, ty, 4); // Iron
-        else if (r < 0.135) placeWorldBlock(tx, ty, 5); // Gold
-        else if (r < 0.165) placeWorldBlock(tx, ty, 2); // Stone
+        if (r < 0.045) placeWorldBlock(tx, ty, 3);
+        else if (r < 0.105) placeWorldBlock(tx, ty, 4);
+        else if (r < 0.135) placeWorldBlock(tx, ty, 5);
+        else if (r < 0.165) placeWorldBlock(tx, ty, 2);
       } else if (g === GROUND.TUNDRA) {
         if (r < 0.035) worldProps.push({ type: 'pine', tx, ty });
-        else if (r < 0.075) placeWorldBlock(tx, ty, 4); // Iron
-        else if (r < 0.115) placeWorldBlock(tx, ty, 10); // Frost Diamond
+        else if (r < 0.075) placeWorldBlock(tx, ty, 4);
+        else if (r < 0.115) placeWorldBlock(tx, ty, 10);
       } else if (g === GROUND.SHADOW) {
         if (r < 0.032) worldProps.push({ type: 'deadtree', tx, ty });
-        else if (r < 0.068) placeWorldBlock(tx, ty, 5); // Gold
-        else if (r < 0.102) placeWorldBlock(tx, ty, 6); // Mythril
+        else if (r < 0.068) placeWorldBlock(tx, ty, 5);
+        else if (r < 0.102) placeWorldBlock(tx, ty, 6);
       } else if (g === GROUND.VOLCANIC) {
-        if (r < 0.035) placeWorldBlock(tx, ty, 5); // Gold
-        else if (r < 0.070) placeWorldBlock(tx, ty, 6); // Mythril
-        else if (r < 0.105) placeWorldBlock(tx, ty, 7); // Celestite
+        if (r < 0.035) placeWorldBlock(tx, ty, 5);
+        else if (r < 0.070) placeWorldBlock(tx, ty, 6);
+        else if (r < 0.105) placeWorldBlock(tx, ty, 7);
       }
     }
   }
 
-  // Starter Ore Cluster right outside the North & West gates for immediate mining fun
+  // Starter Ore Cluster right outside the North Gate
   placeWorldBlock(78, 63, 3);
   placeWorldBlock(82, 63, 3);
   placeWorldBlock(83, 63, 2);
@@ -584,7 +617,6 @@ const player = {
   swingAngle: 0,
   comboStep: 0,
 
-  // Active Skills
   dashCd: 0,
   dashTimer: 0,
   dashAngle: 0,
@@ -597,7 +629,7 @@ const player = {
   xpNext: 80,
   hp: 100,
   maxHp: 100,
-  gold: 100, // Starts with 100 Gold!
+  gold: 100,
   bones: 0,
   kills: 0,
   minedCount: 0,
@@ -619,7 +651,6 @@ const player = {
 
 let nextItemUid = 1;
 
-// Progressive Adventurer Quests that guide the player & award bonus Gold/XP
 const QUEST_CHAIN = [
   {
     title: 'Gear Up in Oakhaven',
@@ -670,7 +701,7 @@ const QUEST_CHAIN = [
 function checkQuestCompletion() {
   const q = QUEST_CHAIN[player.questIndex];
   if (!q) {
-    document.getElementById('quest-title').textContent = '👑 Legend of Valoria';
+    document.getElementById('quest-title').textContent = 'Legend of Valoria';
     document.getElementById('quest-progress').textContent = 'Forge +50 Mythic Gear & Slay Bosses!';
     return;
   }
@@ -681,7 +712,7 @@ function checkQuestCompletion() {
     player.gold += q.rewardGold;
     player.questIndex++;
     SoundFX.levelUp();
-    showToast(`📜 QUEST COMPLETE: "${q.title}"! +🪙${q.rewardGold} Gold & +${q.rewardXp} XP!`);
+    showToast(`QUEST COMPLETE: "${q.title}"! +${q.rewardGold} Gold & +${q.rewardXp} XP!`);
     gainXp(q.rewardXp);
     checkQuestCompletion();
   }
@@ -716,7 +747,6 @@ function addItemToInventory(itemId, qty = 1, upgrade = 0) {
   return lastCreated;
 }
 
-// Starter building blocks
 addItemToInventory('block_wood', 12);
 addItemToInventory('block_lantern', 4);
 
@@ -809,8 +839,8 @@ function gainXp(amount) {
     syncPlayerMaxHp();
     player.hp = player.maxHp;
     SoundFX.levelUp();
-    spawnFloatingText(player.x, player.y - 40, `🎉 LEVEL UP! Lv.${player.level}`, '#fde047', 26);
-    showToast(`🌟 Level Up! You reached Hero Level ${player.level}!`);
+    spawnFloatingText(player.x, player.y - 40, `LEVEL UP! Lv.${player.level}`, '#fde047', 26);
+    showToast(`Level Up! You reached Hero Level ${player.level}!`);
     for (let i = 0; i < 28; i++) {
       spawnParticle(player.x, player.y, '#fbbf24', 160);
     }
@@ -823,34 +853,28 @@ function gainXp(amount) {
 // 6. 14 MONSTERS & 4 WORLD BOSSES
 // ==========================================
 const MONSTER_TYPES = [
-  // Whispering Wilds (Lv 1-6)
   { id: 'slime', species: 'slime', name: 'Emerald Slime', biome: 'forest', level: 1, hp: 36, atk: 7, def: 1, speed: 80, xp: 24, goldMin: 9, goldMax: 18, bones: [1, 2], chestDropChance: 0.20, chestId: 'chest_tier_1', color: '#4ade80', secColor: '#15803d', eyeColor: '#064e3b', radius: 14 },
   { id: 'skeleton', species: 'skeleton', name: 'Wandering Skeleton', biome: 'forest', level: 3, hp: 85, atk: 15, def: 4, speed: 98, xp: 48, goldMin: 18, goldMax: 35, bones: [2, 4], chestDropChance: 0.22, chestId: 'chest_tier_2', color: '#e2e8f0', secColor: '#94a3b8', eyeColor: '#ef4444', radius: 15 },
-  { id: 'forest_boss', species: 'golem', isBoss: true, name: '👑 Brambleheart, Ancient Treant', biome: 'forest', level: 6, hp: 520, atk: 34, def: 12, speed: 82, xp: 320, goldMin: 180, goldMax: 280, bones: [6, 10], chestDropChance: 0.75, chestId: 'chest_tier_3', color: '#16a34a', secColor: '#78350f', eyeColor: '#fde047', radius: 24 },
+  { id: 'forest_boss', species: 'golem', isBoss: true, name: 'Brambleheart, Ancient Treant', biome: 'forest', level: 6, hp: 520, atk: 34, def: 12, speed: 82, xp: 320, goldMin: 180, goldMax: 280, bones: [6, 10], chestDropChance: 0.75, chestId: 'chest_tier_3', color: '#16a34a', secColor: '#78350f', eyeColor: '#fde047', radius: 24 },
 
-  // Sunscorched Dunes (Lv 4-9)
   { id: 'scorpion', species: 'wraith', name: 'Venom Sand Scorpion', biome: 'desert', level: 5, hp: 140, atk: 24, def: 8, speed: 112, xp: 75, goldMin: 32, goldMax: 58, bones: [2, 4], chestDropChance: 0.22, chestId: 'chest_tier_2', color: '#f59e0b', secColor: '#b45309', eyeColor: '#dc2626', radius: 15 },
   { id: 'mummy', species: 'skeleton', name: 'Pharaoh\'s Cursed Guard', biome: 'desert', level: 8, hp: 260, atk: 40, def: 15, speed: 92, xp: 135, goldMin: 55, goldMax: 95, bones: [3, 6], chestDropChance: 0.25, chestId: 'chest_tier_3', color: '#fef08a', secColor: '#ca8a04', eyeColor: '#38bdf8', radius: 16 },
 
-  // Northern Crystal Quarry (Lv 5-11)
   { id: 'goblin', species: 'goblin', name: 'Quarry Goblin Raider', biome: 'quarry', level: 6, hp: 185, atk: 30, def: 10, speed: 115, xp: 98, goldMin: 40, goldMax: 72, bones: [2, 5], chestDropChance: 0.24, chestId: 'chest_tier_3', color: '#84cc16', secColor: '#4d7c0f', eyeColor: '#facc15', radius: 15 },
   { id: 'golem', species: 'golem', name: 'Cobalt Crystal Golem', biome: 'quarry', level: 9, hp: 390, atk: 52, def: 22, speed: 75, xp: 190, goldMin: 80, goldMax: 140, bones: [3, 6], chestDropChance: 0.28, chestId: 'chest_tier_3', color: '#38bdf8', secColor: '#0369a1', eyeColor: '#e0f2fe', radius: 19 },
 
-  // Frostpeak Tundra (Lv 8-14)
   { id: 'frost_wolf', species: 'goblin', name: 'Glacier Direwolf', biome: 'tundra', level: 10, hp: 460, atk: 65, def: 26, speed: 128, xp: 240, goldMin: 95, goldMax: 165, bones: [4, 7], chestDropChance: 0.26, chestId: 'chest_tier_4', color: '#bae6fd', secColor: '#0284c7', eyeColor: '#fef08a', radius: 16 },
-  { id: 'frost_boss', species: 'frost_titan', isBoss: true, name: '👑 Borealis, Frostpeak Behemoth', biome: 'tundra', level: 14, hp: 1650, atk: 115, def: 48, speed: 88, xp: 850, goldMin: 480, goldMax: 720, bones: [10, 16], chestDropChance: 0.80, chestId: 'chest_tier_4', color: '#38bdf8', secColor: '#1e3a8a', eyeColor: '#ff3e6c', radius: 26 },
+  { id: 'frost_boss', species: 'frost_titan', isBoss: true, name: 'Borealis, Frostpeak Behemoth', biome: 'tundra', level: 14, hp: 1650, atk: 115, def: 48, speed: 88, xp: 850, goldMin: 480, goldMax: 720, bones: [10, 16], chestDropChance: 0.80, chestId: 'chest_tier_4', color: '#38bdf8', secColor: '#1e3a8a', eyeColor: '#ff3e6c', radius: 26 },
 
-  // Eastern Shadowlands (Lv 11-17)
   { id: 'wraith', species: 'wraith', name: 'Shadowlands Void Knight', biome: 'shadow', level: 13, hp: 820, atk: 98, def: 42, speed: 118, xp: 390, goldMin: 165, goldMax: 270, bones: [4, 8], chestDropChance: 0.28, chestId: 'chest_tier_4', color: '#a855f7', secColor: '#581c87', eyeColor: '#f43f5e', radius: 17 },
-  { id: 'shadow_boss', species: 'lich', isBoss: true, name: '👑 Malakor, Arch-Lich of the Void', biome: 'shadow', level: 17, hp: 2800, atk: 175, def: 72, speed: 95, xp: 1450, goldMin: 800, goldMax: 1200, bones: [12, 20], chestDropChance: 0.85, chestId: 'chest_tier_5', color: '#c084fc', secColor: '#3b0764', eyeColor: '#4ade80', radius: 25 },
+  { id: 'shadow_boss', species: 'lich', isBoss: true, name: 'Malakor, Arch-Lich of the Void', biome: 'shadow', level: 17, hp: 2800, atk: 175, def: 72, speed: 95, xp: 1450, goldMin: 800, goldMax: 1200, bones: [12, 20], chestDropChance: 0.85, chestId: 'chest_tier_5', color: '#c084fc', secColor: '#3b0764', eyeColor: '#4ade80', radius: 25 },
 
-  // Southern Dragon Peaks (Lv 16-25)
   { id: 'demon', species: 'dragon', name: 'Infernal Magma Wyrm', biome: 'volcanic', level: 18, hp: 1650, atk: 165, def: 75, speed: 108, xp: 780, goldMin: 350, goldMax: 550, bones: [6, 12], chestDropChance: 0.34, chestId: 'chest_tier_5', color: '#f97316', secColor: '#9a3412', eyeColor: '#fef08a', radius: 20 },
-  { id: 'dragon_boss', species: 'boss', isBoss: true, name: '👑 Ignis, Mythic Abyssal Dragon', biome: 'volcanic', level: 23, hp: 5500, atk: 310, def: 130, speed: 100, xp: 3200, goldMin: 1600, goldMax: 2400, bones: [18, 30], chestDropChance: 1.0, chestId: 'chest_tier_6', color: '#ff3e6c', secColor: '#881337', eyeColor: '#fde047', radius: 30 }
+  { id: 'dragon_boss', species: 'boss', isBoss: true, name: 'Ignis, Mythic Abyssal Dragon', biome: 'volcanic', level: 23, hp: 5500, atk: 310, def: 130, speed: 100, xp: 3200, goldMin: 1600, goldMax: 2400, bones: [18, 30], chestDropChance: 1.0, chestId: 'chest_tier_6', color: '#ff3e6c', secColor: '#881337', eyeColor: '#fde047', radius: 30 }
 ];
 
 const monsters = [];
-const projectiles = []; // Sword energy waves
+const projectiles = [];
 const groundDrops = [];
 const particles = [];
 const floatingTexts = [];
@@ -886,24 +910,21 @@ function spawnMonsterInBiome(mType, customX, customY) {
 }
 
 function populateInitialMonsters() {
-  // Regular biome monsters
-  for (let i = 0; i < 28; i++) spawnMonsterInBiome(MONSTER_TYPES[0]); // Slimes
-  for (let i = 0; i < 20; i++) spawnMonsterInBiome(MONSTER_TYPES[1]); // Skeletons
-  for (let i = 0; i < 18; i++) spawnMonsterInBiome(MONSTER_TYPES[3]); // Scorpions
-  for (let i = 0; i < 14; i++) spawnMonsterInBiome(MONSTER_TYPES[4]); // Mummies
-  for (let i = 0; i < 18; i++) spawnMonsterInBiome(MONSTER_TYPES[5]); // Goblins
-  for (let i = 0; i < 14; i++) spawnMonsterInBiome(MONSTER_TYPES[6]); // Golems
-  for (let i = 0; i < 16; i++) spawnMonsterInBiome(MONSTER_TYPES[7]); // Direwolves
-  for (let i = 0; i < 18; i++) spawnMonsterInBiome(MONSTER_TYPES[9]); // Void Knights
-  for (let i = 0; i < 16; i++) spawnMonsterInBiome(MONSTER_TYPES[11]); // Magma Wyrms
+  for (let i = 0; i < 28; i++) spawnMonsterInBiome(MONSTER_TYPES[0]);
+  for (let i = 0; i < 20; i++) spawnMonsterInBiome(MONSTER_TYPES[1]);
+  for (let i = 0; i < 18; i++) spawnMonsterInBiome(MONSTER_TYPES[3]);
+  for (let i = 0; i < 14; i++) spawnMonsterInBiome(MONSTER_TYPES[4]);
+  for (let i = 0; i < 18; i++) spawnMonsterInBiome(MONSTER_TYPES[5]);
+  for (let i = 0; i < 14; i++) spawnMonsterInBiome(MONSTER_TYPES[6]);
+  for (let i = 0; i < 16; i++) spawnMonsterInBiome(MONSTER_TYPES[7]);
+  for (let i = 0; i < 18; i++) spawnMonsterInBiome(MONSTER_TYPES[9]);
+  for (let i = 0; i < 16; i++) spawnMonsterInBiome(MONSTER_TYPES[11]);
 
-  // 4 Landmark World Bosses
-  spawnMonsterInBiome(MONSTER_TYPES[2], 98 * TILE_SIZE, 98 * TILE_SIZE);  // Brambleheart (Forest)
-  spawnMonsterInBiome(MONSTER_TYPES[8], 26 * TILE_SIZE, 28 * TILE_SIZE);  // Borealis (Tundra)
-  spawnMonsterInBiome(MONSTER_TYPES[10], 134 * TILE_SIZE, 75 * TILE_SIZE); // Malakor (Shadowlands)
-  spawnMonsterInBiome(MONSTER_TYPES[12], 80 * TILE_SIZE, 138 * TILE_SIZE); // Ignis (Dragon Peaks)
+  spawnMonsterInBiome(MONSTER_TYPES[2], 98 * TILE_SIZE, 98 * TILE_SIZE);
+  spawnMonsterInBiome(MONSTER_TYPES[8], 26 * TILE_SIZE, 28 * TILE_SIZE);
+  spawnMonsterInBiome(MONSTER_TYPES[10], 134 * TILE_SIZE, 75 * TILE_SIZE);
+  spawnMonsterInBiome(MONSTER_TYPES[12], 80 * TILE_SIZE, 138 * TILE_SIZE);
 
-  // Guaranteed Slimes near the Village gates
   spawnMonsterInBiome(MONSTER_TYPES[0], 80 * TILE_SIZE, 60 * TILE_SIZE);
   spawnMonsterInBiome(MONSTER_TYPES[0], 60 * TILE_SIZE, 80 * TILE_SIZE);
   spawnMonsterInBiome(MONSTER_TYPES[1], 100 * TILE_SIZE, 80 * TILE_SIZE);
@@ -965,13 +986,13 @@ function openMonsterChest(chestItemId) {
   const modal = document.getElementById('modal-chest');
   const body = document.getElementById('chest-loot-result');
   body.innerHTML = `
-    <div style="font-size: 56px;">${wonItem.icon}</div>
+    <div>${getItemIconHtml(wonItem, 56)}</div>
     <div class="rarity-tag rarity-${chosenRarity}">${rInfo.name} Reward</div>
     <div style="font-size: 28px; color: ${rInfo.color}; font-weight: bold;">
       ${getItemDisplayName(createdInstance)}
     </div>
     <div style="color: #cbd5e1; max-width: 390px;">${wonItem.desc}</div>
-    <div style="color: #fbbf24; font-size: 22px;">+ 🪙 ${bonusGold} Bonus Gold!</div>
+    <div style="color: #fbbf24; font-size: 22px;">+ ${SpriteEngine.getIconHtml('coin', '#fbbf24', '#f59e0b', 20)} ${bonusGold} Bonus Gold!</div>
     <button class="pixel-btn action-btn" id="btn-chest-claim">Claim Loot!</button>
   `;
   modal.classList.remove('hidden');
@@ -1102,14 +1123,14 @@ function teleportToVillage() {
   player.y = (VILLAGE_CENTER.y - 1) * TILE_SIZE;
   SoundFX.levelUp();
   for (let i = 0; i < 20; i++) spawnParticle(player.x, player.y, '#38bdf8', 130);
-  showToast('🏡 Teleported back to Oakhaven Village Plaza!');
+  showToast('Teleported back to Oakhaven Village Plaza!');
 }
 
 document.getElementById('btn-recall').onclick = teleportToVillage;
 
 function toggleSoundBtn() {
   const on = SoundFX.toggle();
-  document.getElementById('btn-sound').textContent = on ? '🔊 SFX: ON' : '🔇 SFX: OFF';
+  document.getElementById('btn-sound').textContent = on ? 'SFX: ON' : 'SFX: OFF';
 }
 document.getElementById('btn-sound').onclick = toggleSoundBtn;
 
@@ -1173,7 +1194,7 @@ function damageMonster(m, index, baseDmg, forceCrit = false) {
   spawnFloatingText(
     m.x,
     m.y - 28,
-    isCrit ? `💥 ${dmg}!` : `-${dmg}`,
+    isCrit ? `CRIT ${dmg}!` : `-${dmg}`,
     isCrit ? '#fde047' : '#ffffff',
     isCrit ? 24 : 19
   );
@@ -1210,7 +1231,6 @@ function performPrimaryAction() {
     player.facing = dy > 0 ? 'down' : 'up';
   }
 
-  // Fire Energy Wave Projectile if wielding an Epic, Legendary, or Mythic Weapon!
   if (player.equipment.weapon) {
     const wDef = ITEM_DB[player.equipment.weapon.id];
     if (wDef && wDef.projectileColor) {
@@ -1228,7 +1248,6 @@ function performPrimaryAction() {
     }
   }
 
-  // 1. Check Melee Hit on Monsters
   let hitMonster = false;
   const reach = 82;
   const comboBonus = player.comboStep === 2 ? 1.25 : 1.0;
@@ -1253,7 +1272,6 @@ function performPrimaryAction() {
     return;
   }
 
-  // 2. Otherwise Mine Block / Ore within 3 tiles
   const { tx, ty } = getTargetTileFromCursor();
   const blockCenterX = (tx + 0.5) * TILE_SIZE;
   const blockCenterY = (ty + 0.5) * TILE_SIZE;
@@ -1286,7 +1304,7 @@ function performPrimaryAction() {
         gainXp(bDef.reqPower * 6);
         spawnFloatingText(blockCenterX, blockCenterY - 24, `+1 ${bDef.name}`, bDef.speckle || '#fde047', 18);
       } else {
-        spawnFloatingText(blockCenterX, blockCenterY - 18, `⛏️ ${blk.hp}/${blk.maxHp}`, '#cbd5e1', 15);
+        spawnFloatingText(blockCenterX, blockCenterY - 18, `${blk.hp}/${blk.maxHp}`, '#cbd5e1', 15);
       }
     }
   }
@@ -1369,11 +1387,11 @@ function handleMonsterDefeat(m, index) {
       chestId: t.chestId
     });
     const chestDef = ITEM_DB[t.chestId];
-    showToast(`🎁 RARE DROP! ${t.name} dropped a ${chestDef.name}!`);
+    showToast(`RARE DROP! ${t.name} dropped a ${chestDef.name}!`);
   }
 
   if (t.isBoss) {
-    showToast(`👑 WORLD BOSS DEFEATED! You conquered ${t.name}!`);
+    showToast(`WORLD BOSS DEFEATED! You conquered ${t.name}!`);
     setTimeout(() => spawnMonsterInBiome(t), 30000);
   } else {
     setTimeout(() => spawnMonsterInBiome(t), 8000);
@@ -1387,14 +1405,14 @@ function buildHotbarSlots() {
   const slots = [];
   slots.push({
     kind: 'weapon',
-    label: player.equipment.weapon ? ITEM_DB[player.equipment.weapon.id].name : 'Fists',
-    icon: player.equipment.weapon ? ITEM_DB[player.equipment.weapon.id].icon : '✊',
+    label: player.equipment.weapon ? ITEM_DB[player.equipment.weapon.id].name : 'Unarmed',
+    icon: player.equipment.weapon ? ITEM_DB[player.equipment.weapon.id].icon : SpriteEngine.getIconHtml('sword', '#94a3b8', '#475569', 22),
     rarity: player.equipment.weapon ? ITEM_DB[player.equipment.weapon.id].rarity : 'common'
   });
   slots.push({
     kind: 'tool',
     label: player.equipment.tool ? ITEM_DB[player.equipment.tool.id].name : 'No Pick',
-    icon: player.equipment.tool ? ITEM_DB[player.equipment.tool.id].icon : '⛏️',
+    icon: player.equipment.tool ? ITEM_DB[player.equipment.tool.id].icon : SpriteEngine.getIconHtml('pickaxe', '#64748b', '#475569', 22),
     rarity: player.equipment.tool ? ITEM_DB[player.equipment.tool.id].rarity : 'common'
   });
 
@@ -1437,7 +1455,7 @@ function selectHotbarSlot(index) {
       openMonsterChest(slot.entry.id);
     } else if (d.type === 'block') {
       player.selectedPlaceBlockId = slot.entry.id;
-      showToast(`🧱 Selected ${d.name} (Right-Click or press B to place)`);
+      showToast(`Selected ${d.name} (Right-Click or press B to place)`);
     }
   }
   updateHotbarUI();
@@ -1461,7 +1479,7 @@ function useConsumableItem(itemId) {
   player.hp = Math.min(player.maxHp, player.hp + def.heal);
   if (def.buffType === 'berserk') {
     player.berserkTimer = 30.0;
-    showToast('🔥 BERSERKER RAGE ACTIVE! +35% Attack & +25% Speed for 30s!');
+    showToast('BERSERKER RAGE ACTIVE! +35% Attack & +25% Speed for 30s!');
   }
   SoundFX.coin();
   spawnFloatingText(player.x, player.y - 28, `+${def.heal} HP`, '#4ade80', 21);
@@ -1508,7 +1526,7 @@ function updateHudUI() {
   const setBanner = document.getElementById('set-bonus-banner');
   if (st.activeSet) {
     setBanner.classList.remove('hidden');
-    setBanner.textContent = `✨ ${st.activeSet.setName} Active!`;
+    setBanner.textContent = `${st.activeSet.setName} Active!`;
   } else {
     setBanner.classList.add('hidden');
   }
@@ -1568,7 +1586,7 @@ function equipItemInstance(uid) {
   if (!def || !def.slot) return;
 
   if (player.level < (def.levelReq || 1)) {
-    showToast(`🔒 Requires Hero Level ${def.levelReq} to equip ${def.name}! Fight monsters to level up!`);
+    showToast(`Requires Hero Level ${def.levelReq} to equip ${def.name}! Fight monsters to level up!`);
     return;
   }
 
@@ -1656,11 +1674,11 @@ function renderInventoryModal() {
     card.className = `item-card rarity-${d.rarity} ${entry.uid === selectedBagUid ? 'selected' : ''}`;
 
     let subText = RARITIES[d.rarity].name;
-    if (d.type === 'weapon') subText = `⚔️ +${d.atk} ATK`;
+    if (d.type === 'weapon') subText = `+${d.atk} ATK`;
     else if (d.type === 'armor') {
       const aSt = getArmorStats(entry);
-      subText = `🛡️ +${aSt.def} DEF | Lv.${d.levelReq}`;
-    } else if (d.type === 'tool') subText = `⛏️ Power ${d.power}`;
+      subText = `+${aSt.def} DEF | Lv.${d.levelReq}`;
+    } else if (d.type === 'tool') subText = `Power ${d.power}`;
     else if (entry.qty > 1) subText = `Qty: ${entry.qty}`;
 
     card.innerHTML = `
@@ -1688,20 +1706,20 @@ function renderInventoryModal() {
   const d = ITEM_DB[selEntry.id];
   const rInfo = RARITIES[d.rarity];
   let statsHtml = `<span class="rarity-tag rarity-${d.rarity}">${rInfo.name}</span>`;
-  if (d.type === 'weapon') statsHtml += `<span>⚔️ Attack: +${d.atk}</span>`;
+  if (d.type === 'weapon') statsHtml += `<span>Attack: +${d.atk}</span>`;
   if (d.type === 'armor') {
     const aSt = getArmorStats(selEntry);
     const reqColor = player.level >= d.levelReq ? '#4ade80' : '#f87171';
-    statsHtml += `<span>🛡️ Defense: +${aSt.def}</span><span>❤️ Max HP: +${aSt.hp}</span><span style="color:${reqColor}">🔒 Req Level: ${d.levelReq}</span>`;
+    statsHtml += `<span>Defense: +${aSt.def}</span><span>Max HP: +${aSt.hp}</span><span style="color:${reqColor}">Req Level: ${d.levelReq}</span>`;
   }
-  if (d.type === 'tool') statsHtml += `<span>⛏️ Tier ${d.power} (${d.mineSpeed}x Speed)</span>`;
+  if (d.type === 'tool') statsHtml += `<span>Tier ${d.power} (${d.mineSpeed}x Speed)</span>`;
 
   const sellVal = d.sellPrice || Math.max(2, Math.floor((d.price || 10) * 0.45 + (selEntry.upgrade || 0) * 15));
 
   detailPanel.innerHTML = `
     <div class="detail-header">
       <div class="detail-title" style="color:${rInfo.color}">${d.icon} ${getItemDisplayName(selEntry)}</div>
-      <div>Sell Value: <b style="color:#fbbf24">🪙 ${sellVal}g</b></div>
+      <div>Sell Value: <b style="color:#fbbf24">${sellVal}g</b></div>
     </div>
     <div class="detail-stats">${statsHtml}</div>
     <div style="color:#cbd5e1; font-size:17px;">${d.desc}</div>
@@ -1712,7 +1730,7 @@ function renderInventoryModal() {
   if (d.type === 'weapon' || d.type === 'armor' || d.type === 'tool') {
     const btnEq = document.createElement('button');
     btnEq.className = 'pixel-btn action-btn';
-    btnEq.textContent = player.level >= (d.levelReq || 1) ? 'Equip Item' : `🔒 Requires Lv.${d.levelReq}`;
+    btnEq.textContent = player.level >= (d.levelReq || 1) ? 'Equip Item' : `Requires Lv.${d.levelReq}`;
     btnEq.onclick = () => equipItemInstance(selEntry.uid);
     actContainer.appendChild(btnEq);
   } else if (d.type === 'consumable') {
@@ -1724,13 +1742,13 @@ function renderInventoryModal() {
   } else if (d.type === 'chest') {
     const btnOpen = document.createElement('button');
     btnOpen.className = 'pixel-btn action-btn';
-    btnOpen.textContent = '🎁 Open Loot Chest';
+    btnOpen.textContent = 'Open Loot Chest';
     btnOpen.onclick = () => openMonsterChest(selEntry.id);
     actContainer.appendChild(btnOpen);
   } else if (d.type === 'block') {
     const btnSel = document.createElement('button');
     btnSel.className = 'pixel-btn action-btn';
-    btnSel.textContent = '🧱 Select to Place (R-Click)';
+    btnSel.textContent = 'Select to Place (R-Click)';
     btnSel.onclick = () => {
       player.selectedPlaceBlockId = selEntry.id;
       showToast(`Selected ${d.name} for building!`);
@@ -1781,7 +1799,7 @@ function tryInteractWithBuilding() {
   } else {
     currentShopType = b.shopType;
     selectedShopItemId = null;
-    document.getElementById('shop-title').textContent = `🏪 ${b.name}`;
+    document.getElementById('shop-title').textContent = b.name;
     document.getElementById('shop-greeting').textContent = `${b.npcName}: "${b.greeting}"`;
     document.getElementById('modal-shop').classList.remove('hidden');
     renderShopModal();
@@ -1809,8 +1827,8 @@ function renderShopModal() {
     const card = document.createElement('div');
     card.className = `item-card rarity-${item.rarity} ${selectedShopItemId === item.id ? 'selected' : ''}`;
 
-    let statLine = `🪙 ${item.price}g`;
-    if (item.type === 'armor') statLine = `🪙 ${item.price}g | Lv.${item.levelReq}`;
+    let statLine = `${item.price}g`;
+    if (item.type === 'armor') statLine = `${item.price}g | Lv.${item.levelReq}`;
 
     card.innerHTML = `
       <div class="item-card-top">
@@ -1836,20 +1854,20 @@ function renderShopModal() {
 
   const rInfo = RARITIES[sel.rarity];
   let statsHtml = `<span class="rarity-tag rarity-${sel.rarity}">${rInfo.name}</span>`;
-  if (sel.type === 'weapon') statsHtml += `<span>⚔️ +${sel.atk} ATK</span>`;
-  if (sel.type === 'armor') statsHtml += `<span>🛡️ +${sel.def} DEF</span><span>❤️ +${sel.hp} HP</span><span>🔒 Req Lv.${sel.levelReq}</span>`;
-  if (sel.type === 'tool') statsHtml += `<span>⛏️ Tier ${sel.power} (${sel.mineSpeed}x Speed)</span>`;
-  if (sel.type === 'consumable') statsHtml += `<span>❤️ Restores ${sel.heal} HP</span>`;
+  if (sel.type === 'weapon') statsHtml += `<span>+${sel.atk} ATK</span>`;
+  if (sel.type === 'armor') statsHtml += `<span>+${sel.def} DEF</span><span>+${sel.hp} HP</span><span>Req Lv.${sel.levelReq}</span>`;
+  if (sel.type === 'tool') statsHtml += `<span>Tier ${sel.power} (${sel.mineSpeed}x Speed)</span>`;
+  if (sel.type === 'consumable') statsHtml += `<span>Restores ${sel.heal} HP</span>`;
 
   detailPanel.innerHTML = `
     <div class="detail-header">
       <div class="detail-title" style="color:${rInfo.color}">${sel.icon} ${sel.name}</div>
-      <div style="font-size:22px; color:#fbbf24">🪙 ${sel.price} Gold</div>
+      <div style="font-size:22px; color:#fbbf24">${sel.price} Gold</div>
     </div>
     <div class="detail-stats">${statsHtml}</div>
     <div style="color:#cbd5e1; font-size:17px;">${sel.desc}</div>
     <div class="detail-actions">
-      <button class="pixel-btn action-btn" id="btn-buy-shop-item">Buy for 🪙 ${sel.price}g</button>
+      <button class="pixel-btn action-btn" id="btn-buy-shop-item">Buy for ${sel.price}g</button>
     </div>
   `;
 
@@ -1887,7 +1905,7 @@ document.getElementById('btn-sell-bones').onclick = () => {
   player.gold += earned;
   SoundFX.coin();
   updateHudUI();
-  showToast(`Sold ${count} Bones for 🪙 ${earned} Gold!`);
+  showToast(`Sold ${count} Bones for ${earned} Gold!`);
 };
 
 document.getElementById('btn-sell-ores').onclick = () => {
@@ -1911,7 +1929,7 @@ document.getElementById('btn-sell-ores').onclick = () => {
   SoundFX.coin();
   updateHudUI();
   updateHotbarUI();
-  showToast(`Sold ${totalSold} Mined Ores for 🪙 ${totalEarned} Gold!`);
+  showToast(`Sold ${totalSold} Mined Ores for ${totalEarned} Gold!`);
 };
 
 function getAllPlayerArmorInstances() {
@@ -1956,7 +1974,7 @@ function renderBlacksmithModal() {
         <span>${d.icon} <b>${getItemDisplayName(instance)}</b></span>
         <span class="item-upgrade-tag">${equipped ? 'EQUIPPED' : 'BAG'} (${instance.upgrade || 0}/50)</span>
       </div>
-      <div class="item-sub">🛡️ +${st.def} DEF | ❤️ +${st.hp} Max HP</div>
+      <div class="item-sub">+${st.def} DEF | +${st.hp} Max HP</div>
     `;
     card.onclick = () => {
       selectedSmithUid = instance.uid;
@@ -1976,9 +1994,9 @@ function renderBlacksmithModal() {
     anvilEl.innerHTML = `
       <div style="font-size:24px; color:${rInfo.color}">${d.icon} ${getItemDisplayName(inst)}</div>
       <div class="upgrade-preview-box">
-        🌟 <b>MAXIMUM LEVEL (+50) ACHIEVED!</b><br/>
-        🛡️ Defense: <b>+${curStats.def}</b><br/>
-        ❤️ Bonus Max HP: <b>+${curStats.hp}</b>
+        <b>MAXIMUM LEVEL (+50) ACHIEVED!</b><br/>
+        Defense: <b>+${curStats.def}</b><br/>
+        Bonus Max HP: <b>+${curStats.hp}</b>
       </div>
     `;
     return;
@@ -1989,15 +2007,15 @@ function renderBlacksmithModal() {
 
   anvilEl.innerHTML = `
     <div style="font-size:24px; color:${rInfo.color}">${d.icon} ${getItemDisplayName(inst)}</div>
-    <div>Upgrade Level: <b>+${curUpg} ➔ +${curUpg + 1}</b> (Max +50)</div>
+    <div>Upgrade Level: <b>+${curUpg} -> +${curUpg + 1}</b> (Max +50)</div>
     <div class="upgrade-preview-box">
-      <div>🛡️ Defense: <b>+${curStats.def}</b> ➔ <b style="color:#4ade80">+${nextStats.def}</b> (+${nextStats.def - curStats.def})</div>
-      <div>❤️ Max HP: <b>+${curStats.hp}</b> ➔ <b style="color:#4ade80">+${nextStats.hp}</b> (+${nextStats.hp - curStats.hp})</div>
+      <div>Defense: <b>+${curStats.def}</b> -> <b style="color:#4ade80">+${nextStats.def}</b> (+${nextStats.def - curStats.def})</div>
+      <div>Max HP: <b>+${curStats.hp}</b> -> <b style="color:#4ade80">+${nextStats.hp}</b> (+${nextStats.hp - curStats.hp})</div>
     </div>
-    <div style="font-size:21px; color:#fbbf24">Forge Cost: 🪙 ${cost} Gold</div>
+    <div style="font-size:21px; color:#fbbf24">Forge Cost: ${cost} Gold</div>
     <div style="display:flex; gap:8px;">
-      <button class="pixel-btn action-btn" id="btn-smith-upgrade-1">🔨 Forge +1 (${cost}g)</button>
-      <button class="pixel-btn gold-btn" id="btn-smith-upgrade-5">🔥 Forge +5</button>
+      <button class="pixel-btn action-btn" id="btn-smith-upgrade-1">Forge +1 (${cost}g)</button>
+      <button class="pixel-btn gold-btn" id="btn-smith-upgrade-5">Forge +5</button>
     </div>
   `;
 
@@ -2013,7 +2031,7 @@ function renderBlacksmithModal() {
     checkQuestCompletion();
     updateHudUI();
     renderBlacksmithModal();
-    showToast(`⚒️ Upgraded ${d.name} to +${inst.upgrade}!`);
+    showToast(`Upgraded ${d.name} to +${inst.upgrade}!`);
   };
 
   document.getElementById('btn-smith-upgrade-5').onclick = () => {
@@ -2033,7 +2051,7 @@ function renderBlacksmithModal() {
       checkQuestCompletion();
       updateHudUI();
       renderBlacksmithModal();
-      showToast(`🔥 Tempered ${d.name} to +${inst.upgrade}!`);
+      showToast(`Tempered ${d.name} to +${inst.upgrade}!`);
     }
   };
 }
@@ -2086,7 +2104,6 @@ function update(dt) {
   if (player.berserkTimer > 0) player.berserkTimer = Math.max(0, player.berserkTimer - dt);
   if (screenShake > 0) screenShake = Math.max(0, screenShake - dt);
 
-  // Update Ability HUD Cooldown pills
   document.getElementById('dash-cd').textContent = player.dashCd > 0 ? `${player.dashCd.toFixed(1)}s` : 'Ready';
   document.getElementById('whirlwind-cd').textContent = player.whirlwindCd > 0 ? `${player.whirlwindCd.toFixed(1)}s` : 'Ready';
 
@@ -2107,7 +2124,6 @@ function update(dt) {
     }
   }
 
-  // Player Movement & Dash
   if (!isAnyModalOpen()) {
     if (player.dashTimer > 0) {
       moveEntityWithCollision(
@@ -2144,7 +2160,6 @@ function update(dt) {
     }
   }
 
-  // Update Sword Energy Projectiles
   for (let i = projectiles.length - 1; i >= 0; i--) {
     const pr = projectiles[i];
     pr.x += pr.vx * dt;
@@ -2163,7 +2178,6 @@ function update(dt) {
     if (pr.life <= 0) projectiles.splice(i, 1);
   }
 
-  // Interaction Prompt
   const nearBuilding = getNearestBuilding();
   const promptEl = document.getElementById('interact-prompt');
   if (nearBuilding && !isAnyModalOpen()) {
@@ -2173,7 +2187,6 @@ function update(dt) {
     promptEl.classList.add('hidden');
   }
 
-  // Update Monsters & Track Nearest Boss for Boss HUD
   let nearestBoss = null;
   let nearestBossDist = 99999;
 
@@ -2211,7 +2224,7 @@ function update(dt) {
           player.hp = player.maxHp;
           player.x = VILLAGE_CENTER.x * TILE_SIZE;
           player.y = (VILLAGE_CENTER.y - 1) * TILE_SIZE;
-          showToast('💫 You were knocked out and rescued back to Oakhaven Village!');
+          showToast('You were knocked out and rescued back to Oakhaven Village!');
         }
         updateHudUI();
       }
@@ -2239,7 +2252,6 @@ function update(dt) {
     bossHud.classList.add('hidden');
   }
 
-  // Update Ground Drops
   for (let i = groundDrops.length - 1; i >= 0; i--) {
     const d = groundDrops[i];
     if (d.z > 0 || d.vz > 0) {
@@ -2270,7 +2282,7 @@ function update(dt) {
       } else if (d.type === 'chest') {
         const cDef = ITEM_DB[d.chestId];
         addItemToInventory(d.chestId, 1);
-        spawnFloatingText(player.x, player.y - 34, `🎁 +1 ${cDef.name}!`, RARITIES[cDef.rarity].color, 21);
+        spawnFloatingText(player.x, player.y - 34, `+1 ${cDef.name}!`, RARITIES[cDef.rarity].color, 21);
       }
       groundDrops.splice(i, 1);
       updateHudUI();
@@ -2341,7 +2353,6 @@ function drawGroundTiles(camX, camY) {
 
       ctx.fillRect(sx, sy, TILE_SIZE + 1, TILE_SIZE + 1);
 
-      // Pixel ground details
       const hash = (tx * 19 + ty * 31) % 9;
       if (g === GROUND.PLAZA) {
         ctx.strokeStyle = 'rgba(0,0,0,0.14)';
@@ -2367,11 +2378,9 @@ function draw25DBlock(tx, ty, blk, camX, camY) {
   ctx.fillStyle = 'rgba(0, 0, 0, 0.34)';
   ctx.fillRect(sx + 4, sy + 6, TILE_SIZE, TILE_SIZE - 2);
 
-  // Front 3D face
   ctx.fillStyle = bDef.sideColor;
   ctx.fillRect(sx, sy + TILE_SIZE - wallH, TILE_SIZE, wallH);
 
-  // Top face shifted up
   ctx.fillStyle = bDef.topColor;
   ctx.fillRect(sx, sy - wallH, TILE_SIZE, TILE_SIZE);
 
@@ -2441,23 +2450,33 @@ function draw25DBuilding(b, camX, camY) {
     ctx.fillRect(sx, ry, w, 3);
   }
 
-  ctx.font = 'bold 16px VT323, monospace';
-  ctx.textAlign = 'center';
-  ctx.fillStyle = 'rgba(15, 12, 24, 0.88)';
-  ctx.fillRect(sx + w / 2 - 102, sy - roofHeight - 26, 204, 22);
+  // Signboard with real pixel-art icon!
+  const signW = 210, signH = 24;
+  const signX = sx + w / 2 - signW / 2;
+  const signY = sy - roofHeight - 28;
+  ctx.fillStyle = 'rgba(15, 12, 24, 0.9)';
+  ctx.fillRect(signX, signY, signW, signH);
   ctx.strokeStyle = '#fbbf24';
-  ctx.strokeRect(sx + w / 2 - 102, sy - roofHeight - 26, 204, 22);
+  ctx.strokeRect(signX, signY, signW, signH);
+
+  const iconCan = SpriteEngine.getIconCanvas(b.signIconKind || 'sword', '#fbbf24', '#ffffff');
+  ctx.drawImage(iconCan, signX + 6, signY + 2, 20, 20);
+
+  ctx.font = 'bold 16px VT323, monospace';
+  ctx.textAlign = 'left';
   ctx.fillStyle = '#fde68a';
-  ctx.fillText(`${b.signIcon} ${b.name.split('(')[0]}`, sx + w / 2, sy - roofHeight - 10);
+  ctx.fillText(b.name.split('(')[0].trim(), signX + 32, signY + 17);
 }
 
+// Grounded NPC Renderer: Shadow sits directly beneath the bottom-aligned boots!
 function drawShopNPC(b, camX, camY) {
-  const nx = b.npcX * TILE_SIZE - camX;
-  const ny = b.npcY * TILE_SIZE - camY;
+  const nx = Math.round(b.npcX * TILE_SIZE - camX);
+  const ny = Math.round(b.npcY * TILE_SIZE - camY);
 
-  ctx.fillStyle = 'rgba(0,0,0,0.4)';
+  // Ground shadow directly under feet at (nx, ny - 2)
+  ctx.fillStyle = 'rgba(0, 0, 0, 0.42)';
   ctx.beginPath();
-  ctx.ellipse(nx, ny + 4, 14, 6, 0, 0, Math.PI * 2);
+  ctx.ellipse(nx, ny - 2, 13, 5, 0, 0, Math.PI * 2);
   ctx.fill();
 
   const spr = SpriteEngine.getCharacterSprite({
@@ -2469,46 +2488,48 @@ function drawShopNPC(b, camX, camY) {
     legsColor: '#334155',
     bootsColor: '#0f172a'
   });
-  ctx.drawImage(spr, nx - spr.width / 2, ny - spr.height + 6);
+  // Since spr is exact bottom-aligned, drawing at ny - spr.height places the boots directly on ny!
+  ctx.drawImage(spr, Math.round(nx - spr.width / 2), ny - spr.height);
 
   ctx.font = '16px VT323, monospace';
   ctx.textAlign = 'center';
   ctx.fillStyle = '#000';
-  ctx.fillText(b.npcName, nx + 1, ny - spr.height + 1);
+  ctx.fillText(b.npcName, nx + 1, ny - spr.height - 5);
   ctx.fillStyle = '#fde047';
-  ctx.fillText(b.npcName, nx, ny - spr.height);
+  ctx.fillText(b.npcName, nx, ny - spr.height - 6);
 }
 
 function drawWorldProp(prop, camX, camY) {
-  const sx = (prop.tx + 0.5) * TILE_SIZE - camX;
-  const sy = (prop.ty + 0.85) * TILE_SIZE - camY;
+  const sx = Math.round((prop.tx + 0.5) * TILE_SIZE - camX);
+  const sy = Math.round((prop.ty + 0.85) * TILE_SIZE - camY);
 
   ctx.fillStyle = 'rgba(0,0,0,0.35)';
   ctx.beginPath();
-  ctx.ellipse(sx, sy, 16, 7, 0, 0, Math.PI * 2);
+  ctx.ellipse(sx, sy - 2, 15, 6, 0, 0, Math.PI * 2);
   ctx.fill();
 
   const spr = SpriteEngine.getPropSprite(prop.type);
-  ctx.drawImage(spr, sx - spr.width / 2, sy - spr.height + 6);
+  ctx.drawImage(spr, Math.round(sx - spr.width / 2), sy - spr.height);
 }
 
 function drawMonster(m, camX, camY) {
-  const sx = m.x - camX;
-  const sy = m.y - camY;
+  const sx = Math.round(m.x - camX);
+  const sy = Math.round(m.y - camY);
   const r = m.type.radius;
   const animFrame = Math.floor(performance.now() / 280 + m.uid * 10) % 2;
   const bounce = animFrame === 1 ? 3 : 0;
 
+  // Ground shadow directly under monster base at (sx, sy - 2)
   ctx.fillStyle = 'rgba(0,0,0,0.42)';
   ctx.beginPath();
-  ctx.ellipse(sx, sy + 5, r, r * 0.45, 0, 0, Math.PI * 2);
+  ctx.ellipse(sx, sy - 2, r, r * 0.42, 0, 0, Math.PI * 2);
   ctx.fill();
 
   if (m.type.isBoss) {
     ctx.strokeStyle = '#ff3e6c';
     ctx.lineWidth = 3;
     ctx.beginPath();
-    ctx.ellipse(sx, sy + 4, r + 12, (r + 12) * 0.5, 0, 0, Math.PI * 2);
+    ctx.ellipse(sx, sy - 2, r + 10, (r + 10) * 0.45, 0, 0, Math.PI * 2);
     ctx.stroke();
   }
 
@@ -2522,52 +2543,52 @@ function drawMonster(m, camX, camY) {
   );
 
   const scaleMult = m.type.isBoss ? 1.45 : 1.0;
-  const dw = spr.width * scaleMult;
-  const dh = spr.height * scaleMult;
-  ctx.drawImage(spr, sx - dw / 2, sy - dh + 8 - bounce, dw, dh);
+  const dw = Math.round(spr.width * scaleMult);
+  const dh = Math.round(spr.height * scaleMult);
+  ctx.drawImage(spr, Math.round(sx - dw / 2), sy - dh - bounce, dw, dh);
 
   ctx.font = '15px VT323, monospace';
   ctx.textAlign = 'center';
   ctx.fillStyle = '#000';
-  ctx.fillText(`Lv.${m.type.level} ${m.type.name}`, sx + 1, sy - dh - 5 - bounce);
+  ctx.fillText(`Lv.${m.type.level} ${m.type.name}`, sx + 1, sy - dh - 10 - bounce);
   ctx.fillStyle = m.type.isBoss ? '#ff3e6c' : '#fde68a';
-  ctx.fillText(`Lv.${m.type.level} ${m.type.name}`, sx, sy - dh - 6 - bounce);
+  ctx.fillText(`Lv.${m.type.level} ${m.type.name}`, sx, sy - dh - 11 - bounce);
 
   const barW = Math.max(42, r * 2.5);
   ctx.fillStyle = '#1e1b2e';
-  ctx.fillRect(sx - barW / 2, sy - dh - 2 - bounce, barW, 6);
+  ctx.fillRect(sx - barW / 2, sy - dh - 7 - bounce, barW, 6);
   ctx.fillStyle = m.type.isBoss ? '#ff3e6c' : '#ef4444';
-  ctx.fillRect(sx - barW / 2, sy - dh - 2 - bounce, barW * Math.max(0, m.hp / m.maxHp), 6);
+  ctx.fillRect(sx - barW / 2, sy - dh - 7 - bounce, barW * Math.max(0, m.hp / m.maxHp), 6);
 }
 
+// Grounded Player Renderer: Shadow sits directly beneath the bottom-aligned boots!
 function drawPlayer(camX, camY) {
-  const sx = player.x - camX;
-  const sy = player.y - camY;
+  const sx = Math.round(player.x - camX);
+  const sy = Math.round(player.y - camY);
   const st = getPlayerStats();
 
-  // Active Full-Set Aura Ring
   if (st.activeSet) {
     ctx.strokeStyle = st.activeSet.color;
     ctx.lineWidth = 2.5;
     ctx.beginPath();
-    ctx.ellipse(sx, sy + 5, 22, 10, 0, 0, Math.PI * 2);
+    ctx.ellipse(sx, sy - 2, 20, 8, 0, 0, Math.PI * 2);
     ctx.stroke();
   }
 
-  // Whirlwind AoE Ring
   if (player.whirlwindTimer > 0) {
     ctx.save();
     ctx.strokeStyle = '#fde047';
     ctx.lineWidth = 6;
     ctx.beginPath();
-    ctx.arc(sx, sy - 12, 110 * (1 - player.whirlwindTimer / 0.36), 0, Math.PI * 2);
+    ctx.arc(sx, sy - 16, 110 * (1 - player.whirlwindTimer / 0.36), 0, Math.PI * 2);
     ctx.stroke();
     ctx.restore();
   }
 
-  ctx.fillStyle = 'rgba(0,0,0,0.45)';
+  // Ground shadow directly under player's boots at (sx, sy - 2)
+  ctx.fillStyle = 'rgba(0, 0, 0, 0.45)';
   ctx.beginPath();
-  ctx.ellipse(sx, sy + 6, 14, 6, 0, 0, Math.PI * 2);
+  ctx.ellipse(sx, sy - 2, 13, 5, 0, 0, Math.PI * 2);
   ctx.fill();
 
   const walkFrame = player.walkAnim === 0 ? 0 : (Math.floor(player.walkAnim) % 2) + 1;
@@ -2589,9 +2610,9 @@ function drawPlayer(camX, camY) {
     wingsColor
   });
 
-  ctx.drawImage(spr, sx - spr.width / 2, sy - spr.height + 8);
+  // Boots are at exact bottom of spr, so sy - spr.height puts boots right on sy!
+  ctx.drawImage(spr, Math.round(sx - spr.width / 2), sy - spr.height);
 
-  // Weapon / Pickaxe Swing Arc
   if (player.swingTimer > 0) {
     const progress = 1 - player.swingTimer / 0.22;
     const startAng = player.swingAngle - 1.05;
@@ -2608,12 +2629,12 @@ function drawPlayer(camX, camY) {
     ctx.strokeStyle = swingColor;
     ctx.lineWidth = 6;
     ctx.beginPath();
-    ctx.arc(sx, sy - 16, 46, startAng, curAng);
+    ctx.arc(sx, sy - 18, 46, startAng, curAng);
     ctx.stroke();
 
     ctx.beginPath();
-    ctx.moveTo(sx, sy - 16);
-    ctx.lineTo(sx + Math.cos(curAng) * 52, sy - 16 + Math.sin(curAng) * 52);
+    ctx.moveTo(sx, sy - 18);
+    ctx.lineTo(sx + Math.cos(curAng) * 52, sy - 18 + Math.sin(curAng) * 52);
     ctx.stroke();
     ctx.restore();
   }
@@ -2624,7 +2645,6 @@ function renderMinimap() {
   miniCtx.fillRect(0, 0, 144, 144);
 
   const scale = 144 / MAP_W;
-  // Draw biomes overview
   for (let ty = 0; ty < MAP_H; ty += 2) {
     for (let tx = 0; tx < MAP_W; tx += 2) {
       const g = worldGround[idx(tx, ty)];
@@ -2640,7 +2660,6 @@ function renderMinimap() {
     }
   }
 
-  // Boss icons on minimap
   monsters.forEach(m => {
     if (m.type.isBoss) {
       miniCtx.fillStyle = '#ff3e6c';
@@ -2648,7 +2667,6 @@ function renderMinimap() {
     }
   });
 
-  // Player dot
   miniCtx.fillStyle = '#fde047';
   miniCtx.fillRect((player.x / TILE_SIZE) * scale - 2, (player.y / TILE_SIZE) * scale - 2, 5, 5);
 }
@@ -2715,16 +2733,31 @@ function render() {
     }
   });
 
+  // Ground drops rendered with real pixel-art sprites & grounded shadows!
   groundDrops.forEach(d => {
     renderList.push({
       sortY: d.y,
       draw: () => {
-        const sx = d.x - camX;
-        const sy = d.y - camY - (d.z || 0);
-        ctx.font = '22px serif';
-        ctx.textAlign = 'center';
-        const icon = d.type === 'gold' ? '🪙' : d.type === 'bone' ? '🦴' : '🎁';
-        ctx.fillText(icon, sx, sy);
+        const sx = Math.round(d.x - camX);
+        const sy = Math.round(d.y - camY);
+        const zOff = Math.round(d.z || 0);
+
+        ctx.fillStyle = 'rgba(0,0,0,0.35)';
+        ctx.beginPath();
+        ctx.ellipse(sx, sy - 2, 9, 4, 0, 0, Math.PI * 2);
+        ctx.fill();
+
+        let iconCan;
+        if (d.type === 'gold') {
+          iconCan = SpriteEngine.getIconCanvas('coin', '#fbbf24', '#f59e0b');
+        } else if (d.type === 'bone') {
+          iconCan = SpriteEngine.getIconCanvas('bone', '#e2e8f0', '#94a3b8');
+        } else {
+          const cDef = ITEM_DB[d.chestId];
+          const rColor = cDef ? RARITIES[cDef.rarity].color : '#fbbf24';
+          iconCan = SpriteEngine.getIconCanvas('chest', rColor, '#fbbf24');
+        }
+        ctx.drawImage(iconCan, sx - 12, sy - 24 - zOff, 24, 24);
       }
     });
   });
@@ -2747,7 +2780,6 @@ function render() {
   renderList.sort((a, b) => a.sortY - b.sortY);
   renderList.forEach(item => item.draw());
 
-  // Sword Energy Wave Projectiles
   projectiles.forEach(pr => {
     ctx.save();
     ctx.translate(pr.x - camX, pr.y - camY);
@@ -2794,5 +2826,5 @@ checkQuestCompletion();
 updateHudUI();
 updateHotbarUI();
 renderMinimap();
-showToast('🏡 Welcome to Oakhaven Village! Spend your 100 Gold at the 4 shops [F] and begin your quest!');
+showToast('Welcome to Oakhaven Village! Spend your 100 Gold at the 4 shops [F] and begin your quest!');
 requestAnimationFrame(gameLoop);
