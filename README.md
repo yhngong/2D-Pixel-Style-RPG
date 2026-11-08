@@ -1,5 +1,7 @@
 # ⚔️ Valoria: 2.5D Pixel Style RPG
 
+🎮 **Play Online Anywhere:** [https://yhngong.github.io/2D-Pixel-Style-RPG/](https://yhngong.github.io/2D-Pixel-Style-RPG/)
+
 A Pokemon-inspired **2.5D Oblique Top-Down Action RPG** built with HTML5 Canvas, Vanilla JavaScript, and CSS.
 
 ## 🌟 Key Features
