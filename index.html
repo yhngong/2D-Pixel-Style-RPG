@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Valoria: 2.5D Pixel RPG</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div id="game-wrapper">
+    <canvas id="game-canvas"></canvas>
+
+    <!-- TOP HUD -->
+    <div id="top-hud">
+      <div class="hud-left">
+        <div class="player-badge">
+          <div class="level-circle" id="hud-level">1</div>
+          <div class="player-bars">
+            <div class="bar-container hp-bar" title="Health Points">
+              <div class="bar-fill" id="hud-hp-fill"></div>
+              <span class="bar-text" id="hud-hp-text">100 / 100 HP</span>
+            </div>
+            <div class="bar-container xp-bar" title="Experience Points">
+              <div class="bar-fill" id="hud-xp-fill"></div>
+              <span class="bar-text" id="hud-xp-text">0 / 100 XP</span>
+            </div>
+          </div>
+        </div>
+        <div class="resources-panel">
+          <div class="res-item gold-res" title="Gold Coins">
+            <span class="res-icon">🪙</span>
+            <span id="hud-gold">100</span>
+          </div>
+          <div class="res-item bone-res" title="Monster Bones">
+            <span class="res-icon">🦴</span>
+            <span id="hud-bones">0</span>
+          </div>
+          <div class="res-item atk-res" title="Total Attack Power">
+            <span class="res-icon">⚔️</span>
+            <span id="hud-atk">5</span>
+          </div>
+          <div class="res-item def-res" title="Total Defense">
+            <span class="res-icon">🛡️</span>
+            <span id="hud-def">0</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="hud-center">
+        <div id="zone-banner">🏡 Oakhaven Village (Safe Zone)</div>
+        <div id="set-bonus-banner" class="hidden">✨ Set Bonus Active!</div>
+      </div>
+
+      <div class="hud-right">
+        <button class="pixel-btn" id="btn-inventory" title="Inventory & Equipment (I or E)">
+          🎒 Gear & Bag <span class="key-hint">[I]</span>
+        </button>
+        <button class="pixel-btn" id="btn-help" title="Controls & Guide (H)">
+          📜 Guide <span class="key-hint">[H]</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- INTERACTION PROMPT -->
+    <div id="interact-prompt" class="hidden">Press <span class="key-badge">F</span> to Interact</div>
+
+    <!-- BOTTOM HOTBAR -->
+    <div id="bottom-hud">
+      <div id="hotbar">
+        <!-- Populated dynamically: 1: Sword, 2: Pickaxe, 3: Potion, 4-8: Blocks/Chests -->
+      </div>
+      <div class="controls-mini">
+        <span><b>WASD/Arrows</b> Move</span>
+        <span><b>L-Click/Space</b> Attack / Mine / Use</span>
+        <span><b>R-Click</b> Place Block</span>
+        <span><b>1-8</b> Hotbar</span>
+        <span><b>F</b> Talk / Open Shop</span>
+      </div>
+    </div>
+
+    <!-- INVENTORY & EQUIPMENT MODAL -->
+    <div id="modal-inventory" class="modal-overlay hidden">
+      <div class="modal-window wide-modal">
+        <div class="modal-header">
+          <h2>🛡️ Hero Equipment & Inventory</h2>
+          <button class="close-btn" data-close="modal-inventory">✕</button>
+        </div>
+        <div class="modal-body split-body">
+          <!-- Left: Character Equipment & Stats -->
+          <div class="equip-column">
+            <h3>Equipped Gear</h3>
+            <div class="equip-slots">
+              <div class="equip-slot" data-slot="weapon" id="slot-weapon">
+                <div class="slot-label">Weapon</div>
+                <div class="slot-content">None</div>
+              </div>
+              <div class="equip-slot" data-slot="tool" id="slot-tool">
+                <div class="slot-label">Pickaxe</div>
+                <div class="slot-content">None</div>
+              </div>
+              <div class="equip-slot" data-slot="helmet" id="slot-helmet">
+                <div class="slot-label">Helmet</div>
+                <div class="slot-content">None</div>
+              </div>
+              <div class="equip-slot" data-slot="chestplate" id="slot-chestplate">
+                <div class="slot-label">Chestplate</div>
+                <div class="slot-content">None</div>
+              </div>
+              <div class="equip-slot" data-slot="leggings" id="slot-leggings">
+                <div class="slot-label">Leggings</div>
+                <div class="slot-content">None</div>
+              </div>
+              <div class="equip-slot" data-slot="boots" id="slot-boots">
+                <div class="slot-label">Boots</div>
+                <div class="slot-content">None</div>
+              </div>
+            </div>
+
+            <div class="set-bonus-box" id="equip-set-info">
+              <div class="set-title">Armor Set Bonus (4/4 matching rarity)</div>
+              <div class="set-desc" id="equip-set-desc">Equip 4 armor pieces of the same rarity tier to unlock powerful full-set bonuses!</div>
+            </div>
+
+            <div class="hero-stats-summary" id="hero-stats-summary"></div>
+          </div>
+
+          <!-- Right: Backpack Items -->
+          <div class="bag-column">
+            <div class="bag-tabs">
+              <button class="tab-btn active" data-tab="all">All</button>
+              <button class="tab-btn" data-tab="weapon">Weapons</button>
+              <button class="tab-btn" data-tab="armor">Armor</button>
+              <button class="tab-btn" data-tab="tool">Tools</button>
+              <button class="tab-btn" data-tab="consumable">Potions & Chests</button>
+              <button class="tab-btn" data-tab="block">Blocks & Ores</button>
+            </div>
+            <div id="inventory-grid" class="item-grid"></div>
+            <div id="item-detail-panel" class="item-detail-panel">
+              <div class="detail-placeholder">Select an item to view details, equip, use, or sell.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SHOP MODAL (Weapons, Armor, Tools, Alchemist) -->
+    <div id="modal-shop" class="modal-overlay hidden">
+      <div class="modal-window wide-modal">
+        <div class="modal-header">
+          <h2 id="shop-title">🏪 Village Shop</h2>
+          <button class="close-btn" data-close="modal-shop">✕</button>
+        </div>
+        <div class="modal-body split-body">
+          <div class="shop-list-column">
+            <div class="shop-subtitle" id="shop-greeting">Welcome, traveler! Browse my wares:</div>
+            <div id="shop-items-grid" class="shop-grid"></div>
+          </div>
+          <div class="shop-detail-column">
+            <div id="shop-detail-panel" class="item-detail-panel">
+              <div class="detail-placeholder">Click an item to inspect and purchase.</div>
+            </div>
+            <div class="sell-section">
+              <h3>💰 Quick Sell & Trade</h3>
+              <p class="small-note">Trade collected Bones & mined Ores for Gold, or sell unwanted gear from your Inventory.</p>
+              <div class="quick-sell-buttons">
+                <button class="pixel-btn gold-btn" id="btn-sell-bones">Sell All Bones (🦴 4g each)</button>
+                <button class="pixel-btn gold-btn" id="btn-sell-ores">Sell Mined Ores</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- BLACKSMITH UPGRADE MODAL (+1 to +50) -->
+    <div id="modal-blacksmith" class="modal-overlay hidden">
+      <div class="modal-window">
+        <div class="modal-header">
+          <h2>⚒️ Master Blacksmith: Armor Forge (Up to +50)</h2>
+          <button class="close-btn" data-close="modal-blacksmith">✕</button>
+        </div>
+        <div class="modal-body">
+          <p class="smith-intro">
+            "Bring me your armor and Gold! I can temper any Helmet, Chestplate, Leggings, or Boots up to <b>+50</b>, dramatically boosting its Defense and Max HP!"
+          </p>
+          <div class="smith-layout">
+            <div class="smith-armor-list" id="smith-armor-list"></div>
+            <div class="smith-anvil-panel" id="smith-anvil-panel">
+              <div class="detail-placeholder">Select an equipped or inventory armor piece to forge.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CHEST LOOT REVEAL MODAL -->
+    <div id="modal-chest" class="modal-overlay hidden">
+      <div class="modal-window chest-window">
+        <div class="modal-header">
+          <h2 id="chest-modal-title">🎁 Monster Loot Chest Opened!</h2>
+          <button class="close-btn" data-close="modal-chest">✕</button>
+        </div>
+        <div class="modal-body chest-body" id="chest-loot-result"></div>
+      </div>
+    </div>
+
+    <!-- GUIDE / HELP MODAL -->
+    <div id="modal-help" class="modal-overlay hidden">
+      <div class="modal-window">
+        <div class="modal-header">
+          <h2>📜 Adventurer's Guide to Valoria</h2>
+          <button class="close-btn" data-close="modal-help">✕</button>
+        </div>
+        <div class="modal-body guide-body">
+          <div class="guide-section">
+            <h3>🎯 Your Goal: Become the Strongest Warrior</h3>
+            <p>You begin in <b>Oakhaven Village</b> with <b>100 Gold</b>. Visit the merchants to buy your first Weapon, Pickaxe, Armor, and Potions, then venture into the wilderness to slay monsters, mine ores, and defeat the <b>Mythic Abyssal Dragon</b>!</p>
+          </div>
+          <div class="guide-section">
+            <h3>⚔️ Controls</h3>
+            <ul>
+              <li><b>WASD / Arrow Keys:</b> Walk around the 2.5D world</li>
+              <li><b>Left Click / Spacebar:</b> Swing weapon at monsters OR mine ore/blocks with Pickaxe</li>
+              <li><b>Right Click (or B):</b> Place selected block from hotbar onto the ground</li>
+              <li><b>F Key:</b> Interact with Village Shops & the Blacksmith</li>
+              <li><b>1 - 8 Keys:</b> Select Hotbar slot (Drink potions, open Loot Chests, select blocks)</li>
+              <li><b>I or E Key:</b> Open Equipment & Inventory</li>
+            </ul>
+          </div>
+          <div class="guide-section">
+            <h3>🌈 Rarity Tiers & Level Requirements</h3>
+            <p>All Weapons, Armor, and Pickaxes come in 6 rarities. Better armor requires higher Hero Levels to equip:</p>
+            <ul class="rarity-guide-list">
+              <li><span class="rarity-tag rarity-common">Common</span> (Lv. 1+) — Full Set: +15 Max HP, +2 DEF</li>
+              <li><span class="rarity-tag rarity-uncommon">Uncommon</span> (Lv. 3+) — Full Set: +35 Max HP, +12% Move Speed, +4 ATK</li>
+              <li><span class="rarity-tag rarity-rare">Rare</span> (Lv. 6+) — Full Set: +75 Max HP, +15% Damage, +3 HP/s Regen</li>
+              <li><span class="rarity-tag rarity-epic">Epic</span> (Lv. 10+) — Full Set: +140 Max HP, +25% Damage, +15% Crit, 10% Lifesteal</li>
+              <li><span class="rarity-tag rarity-legendary">Legendary</span> (Lv. 15+) — Full Set: +280 Max HP, +40% Damage, +25% Crit, +12 HP/s Regen</li>
+              <li><span class="rarity-tag rarity-mythic">Mythic</span> (Lv. 20+) — Full Set: +600 Max HP, +75% Damage, +35% Crit, 20% Lifesteal, Mythic Aura!</li>
+            </ul>
+          </div>
+          <div class="guide-section">
+            <h3>⚒️ Blacksmith Armor Upgrades (+1 to +50)</h3>
+            <p>Speak to <b>Bram the Blacksmith</b> in the village center to upgrade any piece of armor up to <b>+50</b> using Gold! Every upgrade level increases the armor's Defense and bonus HP.</p>
+          </div>
+          <div class="guide-section">
+            <h3>📦 Monster Drops & Chests</h3>
+            <p>Monsters drop <b>Gold</b>, <b>Bones</b>, and rarely <b>Tiered Treasure Chests</b> based on the monster's difficulty! Stronger monsters drop higher-tier chests containing Rare, Epic, Legendary, or even Mythic gear.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TOAST NOTIFICATIONS -->
+    <div id="toast-container"></div>
+  </div>
+
+  <script src="game.js"></script>
+</body>
+</html>
